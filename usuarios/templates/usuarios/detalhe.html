@@ -134,4 +134,28 @@
 
     </ul>
 
+    <h3>
+        Solicitações recebidas
+    </h3>
+
+    <ul>
+
+        {% for servico in profissional.servicos.all %}
+            {% for solicitacao in servico.solicitacoes.all %}
+                <li>
+                    {{ solicitacao.servico.titulo }}
+                    —
+                    {{ solicitacao.cliente }}
+                    —
+                    {{ solicitacao.get_status_display }}
+
+                    <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
+                        Detalhar
+                    </a>
+                </li>
+            {% endfor %}
+        {% endfor %}
+
+    </ul>
+
 {% endblock %}
