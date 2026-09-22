@@ -4,6 +4,11 @@ from . import views
 
 urlpatterns = [
     path(
+        '',
+        views.home,
+        name='home'
+    ),
+    path(
         'profissionais/',
         views.lista_profissionais,
         name='lista_profissionais'
