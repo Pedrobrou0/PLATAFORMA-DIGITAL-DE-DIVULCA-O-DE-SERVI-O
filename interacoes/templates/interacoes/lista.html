@@ -23,7 +23,9 @@
         {% for solicitacao in solicitacoes %}
 
             <li>
-                {{ solicitacao }}
+                {{ solicitacao.servico.titulo }}
+                —
+                {{ solicitacao.get_status_display }}
 
                 <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
                     Detalhar

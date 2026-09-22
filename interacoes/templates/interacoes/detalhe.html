@@ -19,9 +19,22 @@
         {{ solicitacao.cliente }}
     </p>
 
-    <p>
+     <p>
         Serviço:
         {{ solicitacao.servico }}
+
+        <a href="{% url 'detalhe_servico' solicitacao.servico.id %}">
+            Ver serviço
+        </a>
+    </p>
+
+    <p>
+        Profissional:
+        {{ solicitacao.servico.profissional }}
+
+        <a href="{% url 'detalhe_profissional' solicitacao.servico.profissional.id %}">
+            Ver profissional
+        </a>
     </p>
 
     <p>

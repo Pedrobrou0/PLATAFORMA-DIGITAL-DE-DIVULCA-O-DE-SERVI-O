@@ -32,6 +32,10 @@
     <p>
         Categoria:
         {{ servico.categoria }}
+
+        <a href="{% url 'detalhe_categoria' servico.categoria.id %}">
+            Ver categoria
+        </a>
     </p>
 
     <p>
