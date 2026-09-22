@@ -1,0 +1,48 @@
+{% extends 'suporte/base.html' %}
+
+{% block title %}
+    Feedback
+{% endblock %}
+
+{% block content %}
+
+    <h2>
+        Feedback {{ feedback.id }}
+    </h2>
+
+    <p>
+        Usuário:
+        {{ feedback.usuario }}
+    </p>
+
+    <p>
+        Tipo:
+        {{ feedback.get_tipo_display }}
+    </p>
+
+    <p>
+        Mensagem:
+        {{ feedback.mensagem }}
+    </p>
+
+    <p>
+        Status:
+        {{ feedback.status }}
+    </p>
+
+    <p>
+        Data de envio:
+        {{ feedback.data_envio }}
+    </p>
+
+    <a href="{% url 'editar_feedback' feedback.id %}">
+        Editar
+    </a>
+
+    |
+
+    <a href="{% url 'deletar_feedback' feedback.id %}">
+        Excluir
+    </a>
+
+{% endblock %}

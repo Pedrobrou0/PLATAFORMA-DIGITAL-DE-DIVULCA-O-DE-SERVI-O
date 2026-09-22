@@ -1,0 +1,41 @@
+{% extends 'suporte/base.html' %}
+
+{% block title %}
+    Feedbacks
+{% endblock %}
+
+{% block content %}
+
+    <h2>
+        Feedbacks
+    </h2>
+
+    <a href="{% url 'criar_feedback' %}">
+        Novo feedback
+    </a>
+
+    <ul>
+
+        {% for feedback in feedbacks %}
+
+            <li>
+                {{ feedback.usuario }}
+                —
+                {{ feedback.get_tipo_display }}
+
+                <a href="{% url 'detalhe_feedback' feedback.id %}">
+                    Detalhar
+                </a>
+            </li>
+
+        {% empty %}
+
+            <li>
+                Nenhum feedback cadastrado.
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}
