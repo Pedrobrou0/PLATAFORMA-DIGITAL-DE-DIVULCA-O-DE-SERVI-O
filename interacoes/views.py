@@ -75,3 +75,38 @@ def deletar_solicitacao(request, id):
         'objeto': solicitacao,
         'lista_url': 'lista_solicitacoes'
     })
+
+def aceitar_solicitacao(request, id):
+    solicitacao = Solicitacao.objects.get(id=id)
+
+    if request.method == 'POST':
+        solicitacao.aceitar()
+
+    return redirect('detalhe_solicitacao', id=solicitacao.id)
+
+
+def recusar_solicitacao(request, id):
+    solicitacao = Solicitacao.objects.get(id=id)
+
+    if request.method == 'POST':
+        solicitacao.recusar()
+
+    return redirect('detalhe_solicitacao', id=solicitacao.id)
+
+
+def cancelar_solicitacao(request, id):
+    solicitacao = Solicitacao.objects.get(id=id)
+
+    if request.method == 'POST':
+        solicitacao.cancelar()
+
+    return redirect('detalhe_solicitacao', id=solicitacao.id)
+
+
+def concluir_solicitacao(request, id):
+    solicitacao = Solicitacao.objects.get(id=id)
+
+    if request.method == 'POST':
+        solicitacao.concluir()
+
+    return redirect('detalhe_solicitacao', id=solicitacao.id)
