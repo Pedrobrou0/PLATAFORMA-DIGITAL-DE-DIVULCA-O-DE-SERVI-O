@@ -17,3 +17,53 @@ def detalhe_feedback(request, id):
     return render(request, 'suporte/feedback_detalhe.html', {
         'feedback': feedback
     })
+
+def criar_feedback(request):
+    form = FeedbackForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        feedbacks = Feedback.objects.all()
+
+        return render(request, 'suporte/feedback_lista.html', {
+            'feedbacks': feedbacks
+        })
+
+    return render(request, 'suporte/feedback_form.html', {
+        'form': form
+    })
+
+
+def editar_feedback(request, id):
+    feedback = Feedback.objects.get(id=id)
+
+    form = FeedbackForm(
+        request.POST or None,
+        instance=feedback
+    )
+
+    if form.is_valid():
+        form.save()
+        feedbacks = Feedback.objects.all()
+
+        return render(request, 'suporte/feedback_lista.html', {
+            'feedbacks': feedbacks
+        })
+
+    return render(request, 'suporte/feedback_form.html', {
+        'form': form
+    })
+
+
+def deletar_feedback(request, id):
+    feedback = Feedback.objects.get(id=id)
+
+    if request.method == 'POST':
+        feedback.delete()
+
+        return redirect('lista_feedbacks')
+
+    return render(request, 'suporte/confirmar_delete.html', {
+        'objeto': feedback,
+        'lista_url': 'lista_feedbacks'
+    })
