@@ -67,3 +67,18 @@ def deletar_feedback(request, id):
         'objeto': feedback,
         'lista_url': 'lista_feedbacks'
     })
+
+def lista_avaliacoes(request):
+    avaliacoes = Avaliacao.objects.all()
+
+    return render(request, 'suporte/avaliacao_lista.html', {
+        'avaliacoes': avaliacoes
+    })
+
+
+def detalhe_avaliacao(request, id):
+    avaliacao = Avaliacao.objects.get(id=id)
+
+    return render(request, 'suporte/avaliacao_detalhe.html', {
+        'avaliacao': avaliacao
+    })
