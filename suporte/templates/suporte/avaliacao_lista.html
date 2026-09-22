@@ -1,0 +1,43 @@
+{% extends 'suporte/base.html' %}
+
+{% block title %}
+    Avaliações
+{% endblock %}
+
+{% block content %}
+
+    <h2>
+        Avaliações
+    </h2>
+
+    <a href="{% url 'criar_avaliacao' %}">
+        Nova avaliação
+    </a>
+
+    <ul>
+
+        {% for avaliacao in avaliacoes %}
+
+            <li>
+                {{ avaliacao.cliente }}
+                —
+                {{ avaliacao.profissional }}
+                —
+                nota {{ avaliacao.nota }}
+
+                <a href="{% url 'detalhe_avaliacao' avaliacao.id %}">
+                    Detalhar
+                </a>
+            </li>
+
+        {% empty %}
+
+            <li>
+                Nenhuma avaliação cadastrada.
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}
