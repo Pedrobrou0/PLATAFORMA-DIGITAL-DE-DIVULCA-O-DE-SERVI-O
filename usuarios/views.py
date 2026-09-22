@@ -1,6 +1,17 @@
 from django.shortcuts import render, redirect
 from .models import Profissional
 from .forms import ProfissionalForm
+from servicos.models import Servico
+
+
+def home(request):
+    profissionais = Profissional.objects.all()[:6]
+    servicos = Servico.objects.filter(ativo=True)[:6]
+
+    return render(request, 'usuarios/home.html', {
+        'profissionais': profissionais,
+        'servicos': servicos
+    })
 
 
 def lista_profissionais(request):

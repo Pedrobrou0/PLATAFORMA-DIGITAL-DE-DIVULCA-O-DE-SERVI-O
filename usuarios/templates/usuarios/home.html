@@ -1,0 +1,67 @@
+{% extends 'usuarios/base.html' %}
+
+{% block title %}
+    Início
+{% endblock %}
+
+{% block content %}
+
+    <h2>
+        Bem-vindo à Plataforma de Serviços Autônomos
+    </h2>
+
+    <h3>
+        Profissionais em destaque
+    </h3>
+
+    <ul>
+
+        {% for profissional in profissionais %}
+
+            <li>
+                {{ profissional }}
+
+                <a href="{% url 'detalhe_profissional' profissional.id %}">
+                    Ver perfil
+                </a>
+            </li>
+
+        {% empty %}
+
+            <li>
+                Nenhum profissional cadastrado ainda.
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+    <h3>
+        Serviços em destaque
+    </h3>
+
+    <ul>
+
+        {% for servico in servicos %}
+
+            <li>
+                {{ servico.titulo }}
+                —
+                {{ servico.profissional }}
+
+                <a href="{% url 'detalhe_servico' servico.id %}">
+                    Ver serviço
+                </a>
+            </li>
+
+        {% empty %}
+
+            <li>
+                Nenhum serviço cadastrado ainda.
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}
