@@ -32,4 +32,28 @@ urlpatterns = [
         views.deletar_solicitacao,
         name='deletar_solicitacao'
     ),
+
+    path(
+        'solicitacoes/<int:id>/aceitar/',
+        views.aceitar_solicitacao,
+        name='aceitar_solicitacao'
+    ),
+
+    path(
+        'solicitacoes/<int:id>/recusar/',
+        views.recusar_solicitacao,
+        name='recusar_solicitacao'
+    ),
+
+    path(
+        'solicitacoes/<int:id>/cancelar/',
+        views.cancelar_solicitacao,
+        name='cancelar_solicitacao'
+    ),
+
+    path(
+        'solicitacoes/<int:id>/concluir/',
+        views.concluir_solicitacao,
+        name='concluir_solicitacao'
+    ),
 ]
