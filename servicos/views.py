@@ -160,3 +160,20 @@ def deletar_servico(request, id):
         'objeto': servico,
         'lista_url': 'lista_servicos'
     })
+
+def ativar_servico(request, id):
+    servico = Servico.objects.get(id=id)
+
+    if request.method == 'POST':
+        servico.ativar()
+
+    return redirect('detalhe_servico', id=servico.id)
+
+
+def desativar_servico(request, id):
+    servico = Servico.objects.get(id=id)
+
+    if request.method == 'POST':
+        servico.desativar()
+
+    return redirect('detalhe_servico', id=servico.id)

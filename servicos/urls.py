@@ -62,4 +62,16 @@ urlpatterns = [
         views.deletar_servico,
         name='deletar_servico'
     ),
+
+    path(
+        'servicos/<int:id>/ativar/',
+        views.ativar_servico,
+        name='ativar_servico'
+    ),
+
+    path(
+        'servicos/<int:id>/desativar/',
+        views.desativar_servico,
+        name='desativar_servico'
+    ),
 ]
