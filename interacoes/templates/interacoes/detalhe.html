@@ -47,6 +47,36 @@
         {{ solicitacao.get_status_display }}
     </p>
 
+    {% if solicitacao.status == 'PENDENTE' %}
+
+        <form method="post" action="{% url 'aceitar_solicitacao' solicitacao.id %}">
+            {% csrf_token %}
+            <button type="submit">Aceitar</button>
+        </form>
+
+        <form method="post" action="{% url 'recusar_solicitacao' solicitacao.id %}">
+            {% csrf_token %}
+            <button type="submit">Recusar</button>
+        </form>
+
+        <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+            {% csrf_token %}
+            <button type="submit">Cancelar</button>
+        </form>
+
+    {% elif solicitacao.status == 'ACEITA' %}
+
+        <form method="post" action="{% url 'concluir_solicitacao' solicitacao.id %}">
+            {% csrf_token %}
+            <button type="submit">Concluir</button>
+        </form>
+
+        <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+            {% csrf_token %}
+            <button type="submit">Cancelar</button>
+        </form>
+
+    {% endif %}
     <p>
         Data:
         {{ solicitacao.data_solicitacao }}
