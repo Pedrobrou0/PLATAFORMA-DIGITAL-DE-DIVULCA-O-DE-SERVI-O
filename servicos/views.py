@@ -78,10 +78,19 @@ def detalhe_categoria(request, id):
     })
 
 def lista_servicos(request):
+    categoria_id = request.GET.get('categoria')
+
     servicos = Servico.objects.all()
 
+    if categoria_id:
+        servicos = servicos.filter(categoria_id=categoria_id)
+
+    categorias = Categoria.objects.all()
+
     return render(request, 'servicos/servico_lista.html', {
-        'servicos': servicos
+        'servicos': servicos,
+        'categorias': categorias,
+        'categoria_selecionada': categoria_id
     })
 
 
