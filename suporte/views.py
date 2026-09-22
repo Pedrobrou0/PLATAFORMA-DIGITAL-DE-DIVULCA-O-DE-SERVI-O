@@ -82,3 +82,53 @@ def detalhe_avaliacao(request, id):
     return render(request, 'suporte/avaliacao_detalhe.html', {
         'avaliacao': avaliacao
     })
+
+def criar_avaliacao(request):
+    form = AvaliacaoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        avaliacoes = Avaliacao.objects.all()
+
+        return render(request, 'suporte/avaliacao_lista.html', {
+            'avaliacoes': avaliacoes
+        })
+
+    return render(request, 'suporte/avaliacao_form.html', {
+        'form': form
+    })
+
+
+def editar_avaliacao(request, id):
+    avaliacao = Avaliacao.objects.get(id=id)
+
+    form = AvaliacaoForm(
+        request.POST or None,
+        instance=avaliacao
+    )
+
+    if form.is_valid():
+        form.save()
+        avaliacoes = Avaliacao.objects.all()
+
+        return render(request, 'suporte/avaliacao_lista.html', {
+            'avaliacoes': avaliacoes
+        })
+
+    return render(request, 'suporte/avaliacao_form.html', {
+        'form': form
+    })
+
+
+def deletar_avaliacao(request, id):
+    avaliacao = Avaliacao.objects.get(id=id)
+
+    if request.method == 'POST':
+        avaliacao.delete()
+
+        return redirect('lista_avaliacoes')
+
+    return render(request, 'suporte/confirmar_delete.html', {
+        'objeto': avaliacao,
+        'lista_url': 'lista_avaliacoes'
+    })
