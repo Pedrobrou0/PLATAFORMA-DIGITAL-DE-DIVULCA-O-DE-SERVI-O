@@ -53,6 +53,21 @@
         {{ servico.data_cadastro }}
     </p>
 
+    <p>
+        Status:
+        {% if servico.ativo %}Ativo{% else %}Inativo{% endif %}
+    </p>
+
+    <form method="post" action="{% if servico.ativo %}{% url 'desativar_servico' servico.id %}{% else %}{% url 'ativar_servico' servico.id %}{% endif %}">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            {% if servico.ativo %}Desativar{% else %}Ativar{% endif %}
+        </button>
+
+    </form>
+
     <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
         Solicitar serviço
     </a>
