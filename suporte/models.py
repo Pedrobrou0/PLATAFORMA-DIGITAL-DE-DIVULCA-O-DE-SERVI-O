@@ -41,6 +41,9 @@ class Avaliacao(models.Model):
         choices=TipoAutorAvaliacao.choices
     )
 
+    def avaliar(self):
+        self.save()
+
     def __str__(self):
         return f'{self.cliente} - {self.profissional} - {self.nota}'
 
@@ -66,6 +69,13 @@ class Feedback(models.Model):
     data_envio = models.DateTimeField(
         auto_now_add=True
     )
+
+    def enviar(self):
+        self.save()
+
+    def alterar_status(self, novo_status):
+        self.status = novo_status
+        self.save()
 
     def __str__(self):
         return f'{self.usuario} - {self.tipo}'
