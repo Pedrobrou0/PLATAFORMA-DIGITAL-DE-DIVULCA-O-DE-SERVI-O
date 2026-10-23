@@ -10,6 +10,14 @@
         Confirmar exclusão
     </h2>
 
+    {% if erro %}
+
+        <p style="color: red;">
+            {{ erro }}
+        </p>
+
+    {% endif %}
+
     <p>
         Tem certeza que deseja excluir
         "{{ objeto }}"?

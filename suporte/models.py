@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 
 from usuarios.models import Profissional
@@ -15,6 +16,12 @@ class TipoFeedback(models.TextChoices):
     PROBLEMA = 'PROBLEMA', 'Problema'
 
 
+class StatusFeedback(models.TextChoices):
+    PENDENTE = 'PENDENTE', 'Pendente'
+    EM_ANALISE = 'EM_ANALISE', 'Em análise'
+    RESOLVIDO = 'RESOLVIDO', 'Resolvido'
+
+
 class Avaliacao(models.Model):
     cliente = models.ForeignKey(
         User,
@@ -28,7 +35,12 @@ class Avaliacao(models.Model):
         related_name='avaliacoes_profissional'
     )
 
-    nota = models.IntegerField()
+    nota = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ]
+    )
 
     comentario = models.TextField()
 
@@ -63,7 +75,9 @@ class Feedback(models.Model):
     mensagem = models.TextField()
 
     status = models.CharField(
-        max_length=50
+        max_length=20,
+        choices=StatusFeedback.choices,
+        default=StatusFeedback.PENDENTE
     )
 
     data_envio = models.DateTimeField(

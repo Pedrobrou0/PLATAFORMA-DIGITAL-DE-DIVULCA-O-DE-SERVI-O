@@ -112,15 +112,23 @@
 
                 R$ {{ servico.preco }}
 
-                <a href="{% url 'detalhe_servico' servico.id %}">
+                    <a href="{% url 'detalhe_servico' servico.id %}">
                     Detalhar
                 </a>
 
-                |
+                {% if servico.ativo %}
 
-                <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
-                    Solicitar serviço
-                </a>
+                    |
+
+                    <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
+                        Solicitar serviço
+                    </a>
+
+                {% else %}
+
+                    (inativo)
+
+                {% endif %}
 
             </li>
 

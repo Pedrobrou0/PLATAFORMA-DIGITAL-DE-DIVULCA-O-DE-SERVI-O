@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Solicitacao
+from .models import Solicitacao, StatusSolicitacao
 from .forms import SolicitacaoForm, SolicitacaoEditarForm
 
 
@@ -31,11 +31,8 @@ def criar_solicitacao(request):
 
     if form.is_valid():
         form.save()
-        solicitacoes = Solicitacao.objects.all()
 
-        return render(request, 'interacoes/lista.html', {
-            'solicitacoes': solicitacoes
-        })
+        return redirect('lista_solicitacoes')
 
     return render(request, 'interacoes/form.html', {
         'form': form
@@ -52,11 +49,8 @@ def editar_solicitacao(request, id):
 
     if form.is_valid():
         form.save()
-        solicitacoes = Solicitacao.objects.all()
 
-        return render(request, 'interacoes/lista.html', {
-            'solicitacoes': solicitacoes
-        })
+        return redirect('lista_solicitacoes')
 
     return render(request, 'interacoes/form.html', {
         'form': form
@@ -79,7 +73,7 @@ def deletar_solicitacao(request, id):
 def aceitar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.aceitar()
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)
@@ -88,7 +82,7 @@ def aceitar_solicitacao(request, id):
 def recusar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.recusar()
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)
@@ -97,7 +91,10 @@ def recusar_solicitacao(request, id):
 def cancelar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and solicitacao.status in [
+        StatusSolicitacao.PENDENTE,
+        StatusSolicitacao.ACEITA
+    ]:
         solicitacao.cancelar()
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)
@@ -106,7 +103,7 @@ def cancelar_solicitacao(request, id):
 def concluir_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and solicitacao.status == StatusSolicitacao.ACEITA:
         solicitacao.concluir()
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)

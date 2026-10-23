@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Feedback, Avaliacao
-from .forms import FeedbackForm, AvaliacaoForm
+from .forms import FeedbackForm, FeedbackEditarForm, AvaliacaoForm
 
 
 def lista_feedbacks(request):
@@ -23,11 +23,8 @@ def criar_feedback(request):
 
     if form.is_valid():
         form.save()
-        feedbacks = Feedback.objects.all()
 
-        return render(request, 'suporte/feedback_lista.html', {
-            'feedbacks': feedbacks
-        })
+        return redirect('lista_feedbacks')
 
     return render(request, 'suporte/feedback_form.html', {
         'form': form
@@ -37,18 +34,15 @@ def criar_feedback(request):
 def editar_feedback(request, id):
     feedback = Feedback.objects.get(id=id)
 
-    form = FeedbackForm(
+    form = FeedbackEditarForm(
         request.POST or None,
         instance=feedback
     )
 
     if form.is_valid():
         form.save()
-        feedbacks = Feedback.objects.all()
 
-        return render(request, 'suporte/feedback_lista.html', {
-            'feedbacks': feedbacks
-        })
+        return redirect('lista_feedbacks')
 
     return render(request, 'suporte/feedback_form.html', {
         'form': form
@@ -88,11 +82,8 @@ def criar_avaliacao(request):
 
     if form.is_valid():
         form.save()
-        avaliacoes = Avaliacao.objects.all()
 
-        return render(request, 'suporte/avaliacao_lista.html', {
-            'avaliacoes': avaliacoes
-        })
+        return redirect('lista_avaliacoes')
 
     return render(request, 'suporte/avaliacao_form.html', {
         'form': form
@@ -109,11 +100,8 @@ def editar_avaliacao(request, id):
 
     if form.is_valid():
         form.save()
-        avaliacoes = Avaliacao.objects.all()
 
-        return render(request, 'suporte/avaliacao_lista.html', {
-            'avaliacoes': avaliacoes
-        })
+        return redirect('lista_avaliacoes')
 
     return render(request, 'suporte/avaliacao_form.html', {
         'form': form

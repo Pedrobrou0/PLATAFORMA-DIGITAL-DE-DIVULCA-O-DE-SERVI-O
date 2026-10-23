@@ -68,11 +68,15 @@
 
     </form>
 
-    <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
-        Solicitar serviço
-    </a>
+        {% if servico.ativo %}
 
-    |
+        <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
+            Solicitar serviço
+        </a>
+
+        |
+
+    {% endif %}
 
     <a href="{% url 'editar_servico' servico.id %}">
         Editar

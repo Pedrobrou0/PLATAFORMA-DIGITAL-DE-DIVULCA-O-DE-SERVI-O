@@ -10,6 +10,18 @@ class FeedbackForm(forms.ModelForm):
         fields = [
             'usuario',
             'tipo',
+            'mensagem'
+        ]
+
+
+class FeedbackEditarForm(forms.ModelForm):
+
+    class Meta:
+        model = Feedback
+
+        fields = [
+            'usuario',
+            'tipo',
             'mensagem',
             'status'
         ]

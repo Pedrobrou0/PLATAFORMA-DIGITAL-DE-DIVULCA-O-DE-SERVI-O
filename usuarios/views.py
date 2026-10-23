@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import ProtectedError
 from .models import Profissional
 from .forms import ProfissionalForm
 from servicos.models import Servico
@@ -38,11 +39,8 @@ def criar_profissional(request):
 
     if form.is_valid():
         form.save()
-        profissionais = Profissional.objects.all()
 
-        return render(request, 'usuarios/lista.html', {
-            'profissionais': profissionais
-        })
+        return redirect('lista_profissionais')
 
     return render(request, 'usuarios/form.html', {
         'form': form
@@ -60,11 +58,8 @@ def editar_profissional(request, id):
 
     if form.is_valid():
         form.save()
-        profissionais = Profissional.objects.all()
 
-        return render(request, 'usuarios/lista.html', {
-            'profissionais': profissionais
-        })
+        return redirect('lista_profissionais')
 
     return render(request, 'usuarios/form.html', {
         'form': form
@@ -75,7 +70,14 @@ def deletar_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
 
     if request.method == 'POST':
-        profissional.delete()
+        try:
+            profissional.delete()
+        except ProtectedError:
+            return render(request, 'usuarios/confirmar_delete.html', {
+                'objeto': profissional,
+                'lista_url': 'lista_profissionais',
+                'erro': 'Não é possível excluir este profissional porque existem solicitações vinculadas aos serviços dele.'
+            })
 
         return redirect('lista_profissionais')
 

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import ProtectedError
 from .models import Categoria, Servico
 from .forms import CategoriaForm, ServicoForm
 
@@ -15,7 +16,14 @@ def deletar_categoria(request, id):
     categoria = Categoria.objects.get(id=id)
 
     if request.method == 'POST':
-        categoria.delete()
+        try:
+            categoria.delete()
+        except ProtectedError:
+            return render(request, 'servicos/confirmar_delete.html', {
+                'objeto': categoria,
+                'lista_url': 'lista_categorias',
+                'erro': 'Não é possível excluir esta categoria porque existem serviços vinculados a ela.'
+            })
 
         return redirect('lista_categorias')
 
@@ -30,11 +38,8 @@ def criar_categoria(request):
 
     if form.is_valid():
         form.save()
-        categorias = Categoria.objects.all()
 
-        return render(request, 'servicos/categoria_lista.html', {
-            'categorias': categorias
-        })
+        return redirect('lista_categorias')
 
     return render(request, 'servicos/categoria_form.html', {
         'form': form
@@ -51,11 +56,8 @@ def editar_categoria(request, id):
 
     if form.is_valid():
         form.save()
-        categorias = Categoria.objects.all()
 
-        return render(request, 'servicos/categoria_lista.html', {
-            'categorias': categorias
-        })
+        return redirect('lista_categorias')
 
     return render(request, 'servicos/categoria_form.html', {
         'form': form
@@ -68,7 +70,8 @@ def detalhe_categoria(request, id):
     profissionais = categoria.profissionais.all()
 
     servicos = Servico.objects.filter(
-        categoria=categoria
+        categoria=categoria,
+        ativo=True
     )
 
     return render(request, 'servicos/categoria_detalhe.html', {
@@ -81,7 +84,7 @@ def lista_servicos(request):
     categoria_id = request.GET.get('categoria')
     termo = request.GET.get('q')
 
-    servicos = Servico.objects.all()
+    servicos = Servico.objects.filter(ativo=True)
 
     if categoria_id:
         servicos = servicos.filter(categoria_id=categoria_id)
@@ -115,11 +118,8 @@ def criar_servico(request):
 
     if form.is_valid():
         form.save()
-        servicos = Servico.objects.all()
 
-        return render(request, 'servicos/servico_lista.html', {
-            'servicos': servicos
-        })
+        return redirect('lista_servicos')
 
     return render(request, 'servicos/servico_form.html', {
         'form': form
@@ -137,11 +137,8 @@ def editar_servico(request, id):
 
     if form.is_valid():
         form.save()
-        servicos = Servico.objects.all()
 
-        return render(request, 'servicos/servico_lista.html', {
-            'servicos': servicos
-        })
+        return redirect('lista_servicos')
 
     return render(request, 'servicos/servico_form.html', {
         'form': form
@@ -152,7 +149,14 @@ def deletar_servico(request, id):
     servico = Servico.objects.get(id=id)
 
     if request.method == 'POST':
-        servico.delete()
+        try:
+            servico.delete()
+        except ProtectedError:
+            return render(request, 'servicos/confirmar_delete.html', {
+                'objeto': servico,
+                'lista_url': 'lista_servicos',
+                'erro': 'Não é possível excluir este serviço porque existem solicitações vinculadas a ele.'
+            })
 
         return redirect('lista_servicos')
 
