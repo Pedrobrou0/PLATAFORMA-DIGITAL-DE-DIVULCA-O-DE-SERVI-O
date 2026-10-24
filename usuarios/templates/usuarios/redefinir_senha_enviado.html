@@ -1,0 +1,26 @@
+{% extends 'usuarios/base.html' %}
+
+
+{% block title %}
+
+    E-mail enviado
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        Verifique seu e-mail
+    </h2>
+
+    <p>
+        Se existir uma conta com o e-mail informado, enviamos um link
+        para você criar uma nova senha.
+    </p>
+
+    <a href="{% url 'login' %}">
+        Voltar para o login
+    </a>
+
+{% endblock %}

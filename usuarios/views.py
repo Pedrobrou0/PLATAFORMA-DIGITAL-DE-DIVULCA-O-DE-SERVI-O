@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
+    PasswordResetForm,
     SetPasswordForm,
 )
 from django.contrib.auth.models import User
@@ -212,6 +213,31 @@ def alterar_senha(request):
         'form': form,
         'titulo': 'Alterar senha'
     })
+
+
+def redefinir_senha(request):
+    form = PasswordResetForm(request.POST or None)
+
+    if form.is_valid():
+        # Gera o token do django.contrib.auth e envia o link
+        # por e-mail (no projeto, o e-mail aparece no terminal).
+        form.save(
+            request=request,
+            use_https=request.is_secure(),
+            subject_template_name='usuarios/email_redefinir_senha_assunto.txt',
+            email_template_name='usuarios/email_redefinir_senha.txt'
+        )
+
+        return redirect('redefinir_senha_enviado')
+
+    return render(request, 'usuarios/senha_form.html', {
+        'form': form,
+        'titulo': 'Redefinir senha'
+    })
+
+
+def redefinir_senha_enviado(request):
+    return render(request, 'usuarios/redefinir_senha_enviado.html')
 
 
 def confirmar_redefinicao_senha(request, uidb64, token):
