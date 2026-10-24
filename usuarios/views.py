@@ -5,7 +5,8 @@ from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from django.utils.http import url_has_allowed_host_and_scheme
 from .models import Profissional
-from .forms import ProfissionalForm
+from .forms import ClienteCadastroForm, ProfissionalForm
+from .permissoes import GRUPO_CLIENTE, adicionar_ao_grupo
 from servicos.models import Servico
 
 
@@ -122,3 +123,30 @@ def sair(request):
         logout(request)
 
     return redirect(settings.LOGOUT_REDIRECT_URL)
+
+def cadastro(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    return render(request, 'usuarios/cadastro.html')
+
+
+def cadastro_cliente(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    form = ClienteCadastroForm(request.POST or None)
+
+    if form.is_valid():
+        cliente = form.save()
+
+        adicionar_ao_grupo(cliente, GRUPO_CLIENTE)
+
+        login(request, cliente)
+
+        return redirect('home')
+
+    return render(request, 'usuarios/cadastro_form.html', {
+        'form': form,
+        'titulo': 'Cadastro de cliente'
+    })

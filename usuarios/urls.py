@@ -41,6 +41,16 @@ urlpatterns = [
     path(
         'sair/',
         views.sair,
-        name='logout'
+               name='logout'
+    ),
+    path(
+        'cadastro/',
+        views.cadastro,
+        name='cadastro'
+    ),
+    path(
+        'cadastro/cliente/',
+        views.cadastro_cliente,
+        name='cadastro_cliente'
     ),
 ]
