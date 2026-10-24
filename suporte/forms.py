@@ -8,21 +8,20 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
 
         fields = [
-            'usuario',
+
             'tipo',
             'mensagem'
         ]
 
 
 class FeedbackEditarForm(forms.ModelForm):
+    # Gerenciar Feedbacks: o Administrador só altera o status.
 
     class Meta:
         model = Feedback
 
         fields = [
-            'usuario',
-            'tipo',
-            'mensagem',
+            
             'status'
         ]
 
