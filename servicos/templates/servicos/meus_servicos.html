@@ -1,0 +1,53 @@
+{% extends 'servicos/base.html' %}
+
+
+{% block title %}
+
+    Meus serviços
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        Meus serviços
+    </h2>
+
+    <a href="{% url 'criar_servico' %}">
+        Novo serviço
+    </a>
+
+    <ul>
+
+        {% for servico in servicos %}
+
+            <li>
+                {{ servico.titulo }}
+                —
+                R$ {{ servico.preco }}
+                —
+                {% if servico.ativo %}Ativo{% else %}Inativo{% endif %}
+
+                <a href="{% url 'detalhe_servico' servico.id %}">
+                    Detalhar
+                </a>
+
+                |
+
+                <a href="{% url 'editar_servico' servico.id %}">
+                    Editar
+                </a>
+            </li>
+
+        {% empty %}
+
+            <li>
+                Você ainda não cadastrou nenhum serviço.
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}

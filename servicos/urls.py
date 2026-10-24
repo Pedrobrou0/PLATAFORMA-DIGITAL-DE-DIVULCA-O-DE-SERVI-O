@@ -40,6 +40,12 @@ urlpatterns = [
     ),
 
     path(
+        'servicos/meus/',
+        views.meus_servicos,
+        name='meus_servicos'
+    ),
+
+    path(
         'servicos/novo/',
         views.criar_servico,
         name='criar_servico'

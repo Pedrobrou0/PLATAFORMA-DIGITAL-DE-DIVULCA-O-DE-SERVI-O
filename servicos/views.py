@@ -218,3 +218,17 @@ def desativar_servico(request, id):
         servico.desativar()
 
     return redirect('detalhe_servico', id=servico.id)
+
+@login_required
+def meus_servicos(request):
+    # Painel do profissional: mostra também os serviços inativos.
+    if not eh_profissional(request.user):
+        raise PermissionDenied
+
+    servicos = Servico.objects.filter(
+        profissional=request.user.profissional
+    ).order_by('-data_cadastro')
+
+    return render(request, 'servicos/meus_servicos.html', {
+        'servicos': servicos
+    })
