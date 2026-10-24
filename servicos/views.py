@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from .models import Categoria, Servico
 from .forms import CategoriaForm, ServicoForm
-from usuarios.permissoes import eh_profissional
+from usuarios.permissoes import eh_profissional, pode_gerenciar
 
 
 def lista_categorias(request):
@@ -143,8 +143,13 @@ def criar_servico(request):
     })
 
 
+@login_required
+@permission_required('servicos.change_servico', raise_exception=True)
 def editar_servico(request, id):
     servico = Servico.objects.get(id=id)
+
+    if not pode_gerenciar(request.user, servico.profissional_id):
+        raise PermissionDenied
 
     form = ServicoForm(
         request.POST or None,
@@ -153,17 +158,22 @@ def editar_servico(request, id):
     )
 
     if form.is_valid():
-        form.save()
+       form.save()
 
-        return redirect('lista_servicos')
+    return redirect('detalhe_servico', id=servico.id)
 
     return render(request, 'servicos/servico_form.html', {
         'form': form
     })
 
 
+@login_required
+@permission_required('servicos.delete_servico', raise_exception=True)
 def deletar_servico(request, id):
     servico = Servico.objects.get(id=id)
+
+    if not pode_gerenciar(request.user, servico.profissional_id):
+        raise PermissionDenied
 
     if request.method == 'POST':
         try:
@@ -182,8 +192,13 @@ def deletar_servico(request, id):
         'lista_url': 'lista_servicos'
     })
 
+@login_required
+@permission_required('servicos.change_servico', raise_exception=True)
 def ativar_servico(request, id):
     servico = Servico.objects.get(id=id)
+
+    if not pode_gerenciar(request.user, servico.profissional_id):
+        raise PermissionDenied
 
     if request.method == 'POST':
         servico.ativar()
@@ -191,8 +206,13 @@ def ativar_servico(request, id):
     return redirect('detalhe_servico', id=servico.id)
 
 
+@login_required
+@permission_required('servicos.change_servico', raise_exception=True)
 def desativar_servico(request, id):
     servico = Servico.objects.get(id=id)
+
+    if not pode_gerenciar(request.user, servico.profissional_id):
+        raise PermissionDenied
 
     if request.method == 'POST':
         servico.desativar()
