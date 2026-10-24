@@ -1,3 +1,4 @@
+rom django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from .models import Categoria, Servico
@@ -12,6 +13,8 @@ def lista_categorias(request):
     })
 
 
+@login_required
+@permission_required('servicos.delete_categoria', raise_exception=True)
 def deletar_categoria(request, id):
     categoria = Categoria.objects.get(id=id)
 
@@ -33,6 +36,8 @@ def deletar_categoria(request, id):
     })
 
 
+@login_required
+@permission_required('servicos.add_categoria', raise_exception=True)
 def criar_categoria(request):
     form = CategoriaForm(request.POST or None)
 
@@ -46,6 +51,8 @@ def criar_categoria(request):
     })
 
 
+@login_required
+@permission_required('servicos.change_categoria', raise_exception=True)
 def editar_categoria(request, id):
     categoria = Categoria.objects.get(id=id)
 
