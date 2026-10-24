@@ -14,9 +14,13 @@
         Categorias
     </h2>
 
-    <a href="{% url 'criar_categoria' %}">
-        Nova categoria
-    </a>
+    {% if perms.servicos.add_categoria %}
+
+        <a href="{% url 'criar_categoria' %}">
+            Nova categoria
+        </a>
+
+    {% endif %}
 
     <ul>
 

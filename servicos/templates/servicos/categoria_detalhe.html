@@ -66,13 +66,17 @@
 
                 <a href="{% url 'detalhe_servico' servico.id %}">
                     Detalhar
-                </a>
+               </a>
 
-                |
+                {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
 
-                <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
-                    Solicitar serviço
-                </a>
+                    |
+
+                    <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
+                        Solicitar serviço
+                    </a>
+
+                {% endif %}
 
             </li>
 
@@ -86,14 +90,22 @@
 
     </ul>
 
-    <a href="{% url 'editar_categoria' categoria.id %}">
-        Editar
-    </a>
+    {% if perms.servicos.change_categoria %}
 
-    |
+        <a href="{% url 'editar_categoria' categoria.id %}">
+            Editar
+        </a>
 
-    <a href="{% url 'deletar_categoria' categoria.id %}">
-        Excluir
-    </a>
+    {% endif %}
+
+    {% if perms.servicos.delete_categoria %}
+
+        |
+
+        <a href="{% url 'deletar_categoria' categoria.id %}">
+            Excluir
+        </a>
+
+    {% endif %}
 
 {% endblock %}
