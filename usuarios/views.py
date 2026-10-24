@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
@@ -116,3 +116,9 @@ def entrar(request):
         'form': form,
         'next': request.GET.get('next', '')
     })
+
+def sair(request):
+    if request.method == 'POST':
+        logout(request)
+
+    return redirect(settings.LOGOUT_REDIRECT_URL)

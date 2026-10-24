@@ -36,6 +36,11 @@ urlpatterns = [
     path(
         'entrar/',
         views.entrar,
-        name='login'
+       name='login'
+    ),
+    path(
+        'sair/',
+        views.sair,
+        name='logout'
     ),
 ]
