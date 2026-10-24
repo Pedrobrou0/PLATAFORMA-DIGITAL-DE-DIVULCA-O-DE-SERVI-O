@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -14,6 +16,7 @@ from .permissoes import (
     GRUPO_CLIENTE,
     GRUPO_PROFISSIONAL,
     adicionar_ao_grupo,
+    pode_gerenciar,
 )
 from servicos.models import Servico
 
@@ -68,8 +71,12 @@ def criar_profissional(request):
     })
 
 
+@login_required
 def editar_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
+
+    if not pode_gerenciar(request.user, profissional.id):
+        raise PermissionDenied
 
     form = ProfissionalForm(
         request.POST or None,
@@ -78,19 +85,25 @@ def editar_profissional(request, id):
     )
 
     if form.is_valid():
-        form.save()
+       form.save()
 
-        return redirect('lista_profissionais')
+    return redirect('detalhe_profissional', id=profissional.id)
 
     return render(request, 'usuarios/form.html', {
         'form': form
     })
 
 
+@login_required
 def deletar_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
 
+    if not pode_gerenciar(request.user, profissional.id):
+        raise PermissionDenied
+
     if request.method == 'POST':
+        proprio_usuario = request.user.id == profissional.id
+
         try:
             profissional.delete()
         except ProtectedError:
@@ -99,6 +112,9 @@ def deletar_profissional(request, id):
                 'lista_url': 'lista_profissionais',
                 'erro': 'Não é possível excluir este profissional porque existem solicitações vinculadas aos serviços dele.'
             })
+
+        if proprio_usuario:
+            logout(request)
 
         return redirect('lista_profissionais')
 

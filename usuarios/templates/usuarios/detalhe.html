@@ -85,15 +85,19 @@
     </ul>
 
 
-    <a href="{% url 'editar_profissional' profissional.id %}">
-        Editar
-    </a>
+    {% if user.id == profissional.id or perms.usuarios.change_profissional %}
 
-    |
+        <a href="{% url 'editar_profissional' profissional.id %}">
+            Editar
+        </a>
 
-    <a href="{% url 'deletar_profissional' profissional.id %}">
-        Excluir
-    </a>
+        |
+
+        <a href="{% url 'deletar_profissional' profissional.id %}">
+            Excluir
+        </a>
+
+    {% endif %}
 
 
     <h3>
