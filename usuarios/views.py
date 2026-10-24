@@ -5,8 +5,16 @@ from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from django.utils.http import url_has_allowed_host_and_scheme
 from .models import Profissional
-from .forms import ClienteCadastroForm, ProfissionalForm
-from .permissoes import GRUPO_CLIENTE, adicionar_ao_grupo
+from .forms import (
+    ClienteCadastroForm,
+    ProfissionalCadastroForm,
+    ProfissionalForm,
+)
+from .permissoes import (
+    GRUPO_CLIENTE,
+    GRUPO_PROFISSIONAL,
+    adicionar_ao_grupo,
+)
 from servicos.models import Servico
 
 
@@ -37,18 +45,26 @@ def detalhe_profissional(request, id):
 
 
 def criar_profissional(request):
-    form = ProfissionalForm(
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    form = ProfissionalCadastroForm(
         request.POST or None,
         request.FILES or None
     )
 
     if form.is_valid():
-        form.save()
+        profissional = form.save()
 
-        return redirect('lista_profissionais')
+        adicionar_ao_grupo(profissional, GRUPO_PROFISSIONAL)
 
-    return render(request, 'usuarios/form.html', {
-        'form': form
+        login(request, profissional)
+
+        return redirect('detalhe_profissional', id=profissional.id)
+
+    return render(request, 'usuarios/cadastro_form.html', {
+        'form': form,
+        'titulo': 'Cadastro de profissional'
     })
 
 
