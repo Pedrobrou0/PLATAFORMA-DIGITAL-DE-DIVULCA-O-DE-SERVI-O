@@ -9,7 +9,6 @@ class SolicitacaoForm(forms.ModelForm):
         model = Solicitacao
 
         fields = [
-            'cliente',
             'servico',
             'descricao'
         ]
@@ -28,7 +27,6 @@ class SolicitacaoEditarForm(forms.ModelForm):
         model = Solicitacao
 
         fields = [
-            'cliente',
             'servico',
             'descricao'
         ]

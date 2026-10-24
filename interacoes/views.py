@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 from .models import Solicitacao, StatusSolicitacao
 from .forms import SolicitacaoForm, SolicitacaoEditarForm
@@ -19,6 +20,8 @@ def detalhe_solicitacao(request, id):
     })
 
 
+@login_required
+@permission_required('interacoes.add_solicitacao', raise_exception=True)
 def criar_solicitacao(request):
     servico_id = request.GET.get('servico')
 
@@ -30,9 +33,13 @@ def criar_solicitacao(request):
     )
 
     if form.is_valid():
-        form.save()
+        solicitacao = form.save(commit=False)
 
-        return redirect('lista_solicitacoes')
+        # O cliente é sempre quem está logado.
+        solicitacao.cliente = request.user
+        solicitacao.save()
+
+        return redirect('detalhe_solicitacao', id=solicitacao.id)
 
     return render(request, 'interacoes/form.html', {
         'form': form
