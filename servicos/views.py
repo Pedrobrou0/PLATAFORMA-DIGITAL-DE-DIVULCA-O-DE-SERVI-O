@@ -1,8 +1,10 @@
-rom django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
 from .models import Categoria, Servico
 from .forms import CategoriaForm, ServicoForm
+from usuarios.permissoes import eh_profissional
 
 
 def lista_categorias(request):
@@ -117,16 +119,24 @@ def detalhe_servico(request, id):
     })
 
 
+d@login_required
+@permission_required('servicos.add_servico', raise_exception=True)
 def criar_servico(request):
+    # Só quem tem perfil de Profissional publica serviço.
+    if not eh_profissional(request.user):
+        raise PermissionDenied
+
     form = ServicoForm(
         request.POST or None,
         request.FILES or None
     )
 
-    if form.is_valid():
-        form.save()
+   if form.is_valid():
+        servico = form.save(commit=False)
+        servico.profissional = request.user.profissional
+        servico.save()
 
-        return redirect('lista_servicos')
+        return redirect('detalhe_servico', id=servico.id)
 
     return render(request, 'servicos/servico_form.html', {
         'form': form

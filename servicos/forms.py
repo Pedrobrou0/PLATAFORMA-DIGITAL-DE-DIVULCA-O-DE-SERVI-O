@@ -19,7 +19,6 @@ class ServicoForm(forms.ModelForm):
         model = Servico
 
         fields = [
-            'profissional',
             'categoria',
             'titulo',
             'descricao',
