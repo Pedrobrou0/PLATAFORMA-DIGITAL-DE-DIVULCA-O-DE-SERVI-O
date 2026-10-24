@@ -115,7 +115,11 @@ def detalhe_servico(request, id):
     servico = Servico.objects.get(id=id)
 
     return render(request, 'servicos/servico_detalhe.html', {
-        'servico': servico
+        'servico': servico,
+        'pode_gerenciar': pode_gerenciar(
+            request.user,
+            servico.profissional_id
+        )
     })
 
 

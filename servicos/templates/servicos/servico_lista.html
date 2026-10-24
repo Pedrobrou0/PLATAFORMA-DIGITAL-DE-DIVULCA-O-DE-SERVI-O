@@ -12,12 +12,16 @@
 
     <h2>
         Serviços
-    </h2>
+   </h2>
 
-    <a href="{% url 'criar_servico' %}">
-        Novo serviço
-    </a>
-    
+    {% if user.profissional %}
+
+        <a href="{% url 'criar_servico' %}">
+            Novo serviço
+        </a>
+
+    {% endif %}
+
         <form method="get">
 
             <input type="text" name="q" value="{{ termo|default:'' }}" placeholder="Buscar por título">
