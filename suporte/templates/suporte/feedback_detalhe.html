@@ -33,16 +33,24 @@
     <p>
         Data de envio:
         {{ feedback.data_envio }}
-    </p>
+   </p>
 
-    <a href="{% url 'editar_feedback' feedback.id %}">
-        Editar
-    </a>
+    {% if perms.suporte.change_feedback %}
 
-    |
+        <a href="{% url 'editar_feedback' feedback.id %}">
+            Alterar status
+        </a>
 
-    <a href="{% url 'deletar_feedback' feedback.id %}">
-        Excluir
-    </a>
+    {% endif %}
+
+    {% if perms.suporte.delete_feedback %}
+
+        |
+
+        <a href="{% url 'deletar_feedback' feedback.id %}">
+            Excluir
+        </a>
+
+    {% endif %}
 
 {% endblock %}

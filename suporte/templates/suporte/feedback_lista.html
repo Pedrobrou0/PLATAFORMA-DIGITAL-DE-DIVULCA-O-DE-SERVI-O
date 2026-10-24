@@ -7,12 +7,20 @@
 {% block content %}
 
     <h2>
-        Feedbacks
+        {% if perms.suporte.view_feedback %}
+            Gerenciar feedbacks
+        {% else %}
+            Meus feedbacks
+        {% endif %}
     </h2>
 
-    <a href="{% url 'criar_feedback' %}">
-        Novo feedback
-    </a>
+    {% if perms.suporte.add_feedback %}
+
+        <a href="{% url 'criar_feedback' %}">
+            Enviar feedback
+        </a>
+
+    {% endif %}
 
     <ul>
 
@@ -20,8 +28,10 @@
 
             <li>
                 {{ feedback.usuario }}
-                —
+               —
                 {{ feedback.get_tipo_display }}
+                —
+                {{ feedback.get_status_display }}
 
                 <a href="{% url 'detalhe_feedback' feedback.id %}">
                     Detalhar
