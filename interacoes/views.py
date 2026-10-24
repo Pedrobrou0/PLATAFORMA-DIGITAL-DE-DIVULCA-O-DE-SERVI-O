@@ -6,6 +6,16 @@ from .forms import SolicitacaoForm, SolicitacaoEditarForm
 from usuarios.permissoes import eh_administrador, eh_profissional
 
 
+def verificar_cliente_dono(request, solicitacao):
+    if solicitacao.cliente_id != request.user.id:
+        raise PermissionDenied
+
+
+def verificar_profissional_dono(request, solicitacao):
+    if solicitacao.servico.profissional_id != request.user.id:
+        raise PermissionDenied
+
+
 @login_required
 def lista_solicitacoes(request):
     if eh_administrador(request.user):
@@ -81,24 +91,31 @@ def criar_solicitacao(request):
     })
 
 
+@login_required
 def editar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
+    verificar_cliente_dono(request, solicitacao)
+
+    # Só dá para editar enquanto o profissional não respondeu.
+    if solicitacao.status != StatusSolicitacao.PENDENTE:
+        return redirect('detalhe_solicitacao', id=solicitacao.id)
+
     form = SolicitacaoEditarForm(
-        request.POST or None,
-        instance=solicitacao
     )
 
     if form.is_valid():
         form.save()
 
-        return redirect('lista_solicitacoes')
+        return redirect('detalhe_solicitacao', id=solicitacao.id)
 
     return render(request, 'interacoes/form.html', {
         'form': form
     })
 
 
+@login_required
+@permission_required('interacoes.delete_solicitacao', raise_exception=True)
 def deletar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
@@ -112,8 +129,12 @@ def deletar_solicitacao(request, id):
         'lista_url': 'lista_solicitacoes'
     })
 
+@login_required
+@permission_required('interacoes.change_solicitacao', raise_exception=True)
 def aceitar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
+
+    verificar_profissional_dono(request, solicitacao)
 
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.aceitar()
@@ -121,8 +142,12 @@ def aceitar_solicitacao(request, id):
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
 
+@login_required
+@permission_required('interacoes.change_solicitacao', raise_exception=True)
 def recusar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
+
+    verificar_profissional_dono(request, solicitacao)
 
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.recusar()
@@ -130,8 +155,11 @@ def recusar_solicitacao(request, id):
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
 
+@login_required
 def cancelar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
+
+    verificar_cliente_dono(request, solicitacao)
 
     if request.method == 'POST' and solicitacao.status in [
         StatusSolicitacao.PENDENTE,
@@ -142,8 +170,12 @@ def cancelar_solicitacao(request, id):
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
 
+@login_required
+@permission_required('interacoes.change_solicitacao', raise_exception=True)
 def concluir_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
+
+    verificar_profissional_dono(request, solicitacao)
 
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.ACEITA:
         solicitacao.concluir()
