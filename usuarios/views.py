@@ -1,7 +1,10 @@
 from django.conf import settings
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordChangeForm,
+)
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
@@ -181,4 +184,24 @@ def cadastro_cliente(request):
     return render(request, 'usuarios/cadastro_form.html', {
         'form': form,
         'titulo': 'Cadastro de cliente'
+    })
+
+@login_required
+def alterar_senha(request):
+    form = PasswordChangeForm(
+        request.user,
+        request.POST or None
+    )
+
+    if form.is_valid():
+        usuario = form.save()
+
+        # Mantém o usuário logado depois de trocar a senha.
+        update_session_auth_hash(request, usuario)
+
+        return redirect('home')
+
+    return render(request, 'usuarios/senha_form.html', {
+        'form': form,
+        'titulo': 'Alterar senha'
     })

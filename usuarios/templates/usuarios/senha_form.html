@@ -1,0 +1,29 @@
+{% extends 'usuarios/base.html' %}
+
+
+{% block title %}
+
+    {{ titulo }}
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        {{ titulo }}
+    </h2>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Salvar nova senha
+        </button>
+
+    </form>
+
+{% endblock %}

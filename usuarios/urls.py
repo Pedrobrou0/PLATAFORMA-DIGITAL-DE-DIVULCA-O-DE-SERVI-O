@@ -53,4 +53,9 @@ urlpatterns = [
         views.cadastro_cliente,
         name='cadastro_cliente'
     ),
+    path(
+        'conta/senha/',
+        views.alterar_senha,
+        name='alterar_senha'
+    ),
 ]
