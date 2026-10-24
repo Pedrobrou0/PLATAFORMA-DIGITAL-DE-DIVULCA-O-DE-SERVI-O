@@ -31,6 +31,11 @@ urlpatterns = [
     path(
         'profissionais/<int:id>/deletar/',
         views.deletar_profissional,
-        name='deletar_profissional'
+       name='deletar_profissional'
+    ),
+    path(
+        'entrar/',
+        views.entrar,
+        name='login'
     ),
 ]
