@@ -1,22 +1,57 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from .models import Solicitacao, StatusSolicitacao
 from .forms import SolicitacaoForm, SolicitacaoEditarForm
+from usuarios.permissoes import eh_administrador, eh_profissional
 
 
+@login_required
 def lista_solicitacoes(request):
-    solicitacoes = Solicitacao.objects.all()
+    if eh_administrador(request.user):
+        solicitacoes = Solicitacao.objects.all()
+        titulo = 'Todas as solicitações'
+
+    elif eh_profissional(request.user):
+        # Gerenciar Solicitações Recebidas
+        solicitacoes = Solicitacao.objects.filter(
+            servico__profissional_id=request.user.id
+        )
+        titulo = 'Solicitações recebidas'
+
+    else:
+        # Acompanhar Solicitações
+        solicitacoes = Solicitacao.objects.filter(
+            cliente=request.user
+        )
+        titulo = 'Minhas solicitações'
 
     return render(request, 'interacoes/lista.html', {
-        'solicitacoes': solicitacoes
+        'solicitacoes': solicitacoes.order_by('-data_solicitacao'),
+        'titulo': titulo
     })
 
 
+@login_required
 def detalhe_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
+    eh_cliente_dono = solicitacao.cliente_id == request.user.id
+    eh_profissional_dono = (
+        solicitacao.servico.profissional_id == request.user.id
+    )
+
+    if not (
+        eh_cliente_dono
+        or eh_profissional_dono
+        or eh_administrador(request.user)
+    ):
+        raise PermissionDenied
+
     return render(request, 'interacoes/detalhe.html', {
-        'solicitacao': solicitacao
+        'solicitacao': solicitacao,
+        'eh_cliente_dono': eh_cliente_dono,
+        'eh_profissional_dono': eh_profissional_dono
     })
 
 
