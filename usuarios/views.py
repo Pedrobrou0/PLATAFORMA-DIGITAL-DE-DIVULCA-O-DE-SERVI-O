@@ -4,13 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
+    SetPasswordForm,
 )
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.db.models import ProtectedError
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.http import (
+    url_has_allowed_host_and_scheme,
+    urlsafe_base64_decode,
+)
 from .models import Profissional
 from .forms import (
+
     ClienteCadastroForm,
     ProfissionalCadastroForm,
     ProfissionalForm,
@@ -205,3 +212,36 @@ def alterar_senha(request):
         'form': form,
         'titulo': 'Alterar senha'
     })
+
+
+def confirmar_redefinicao_senha(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        usuario = None
+
+    # O token do django.contrib.auth expira e só vale uma vez.
+    link_valido = (
+        usuario is not None
+        and default_token_generator.check_token(usuario, token)
+    )
+
+    form = None
+
+    if link_valido:
+        form = SetPasswordForm(usuario, request.POST or None)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('redefinir_senha_concluido')
+
+    return render(request, 'usuarios/confirmar_redefinicao_senha.html', {
+        'form': form,
+        'link_valido': link_valido
+    })
+
+
+def redefinir_senha_concluido(request):
+    return render(request, 'usuarios/redefinir_senha_concluido.html')

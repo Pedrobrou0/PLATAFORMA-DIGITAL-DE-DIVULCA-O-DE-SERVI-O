@@ -56,6 +56,17 @@ urlpatterns = [
     path(
         'conta/senha/',
         views.alterar_senha,
-        name='alterar_senha'
+                name='alterar_senha'
+    ),
+    path(
+        'senha/redefinir/concluido/',
+        views.redefinir_senha_concluido,
+        name='redefinir_senha_concluido'
+    ),
+    path(
+        'senha/redefinir/<uidb64>/<token>/',
+        views.confirmar_redefinicao_senha,
+        name='confirmar_redefinicao_senha'
     ),
 ]
+

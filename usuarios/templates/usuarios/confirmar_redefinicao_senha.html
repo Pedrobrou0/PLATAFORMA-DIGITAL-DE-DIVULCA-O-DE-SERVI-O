@@ -1,0 +1,45 @@
+{% extends 'usuarios/base.html' %}
+
+
+{% block title %}
+
+    Nova senha
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        Criar nova senha
+    </h2>
+
+    {% if link_valido %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Salvar nova senha
+            </button>
+
+        </form>
+
+    {% else %}
+
+        <p>
+            Este link de redefinição é inválido ou já foi usado.
+            Volte para o login e clique em "Esqueci minha senha"
+            para receber um novo link.
+        </p>
+
+        <a href="{% url 'login' %}">
+            Voltar para o login
+        </a>
+
+    {% endif %}
+
+{% endblock %}
