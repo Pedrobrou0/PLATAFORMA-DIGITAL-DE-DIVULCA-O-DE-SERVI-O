@@ -10,9 +10,13 @@
         Avaliações
     </h2>
 
-    <a href="{% url 'criar_avaliacao' %}">
-        Nova avaliação
-    </a>
+    {% if perms.suporte.add_avaliacao %}
+
+        <a href="{% url 'criar_avaliacao' %}">
+            Nova avaliação
+        </a>
+
+    {% endif %}
 
     <ul>
 

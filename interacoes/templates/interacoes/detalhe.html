@@ -90,6 +90,22 @@
                 <button type="submit">Cancelar</button>
             </form>
 
+       {% endif %}
+
+    {% elif solicitacao.status == 'CONCLUIDA' %}
+
+        {% if eh_cliente_dono %}
+
+            <a href="{% url 'criar_avaliacao' %}?profissional={{ solicitacao.servico.profissional.id }}">
+                Avaliar profissional
+            </a>
+
+        {% elif eh_profissional_dono %}
+
+            <a href="{% url 'criar_avaliacao' %}?cliente={{ solicitacao.cliente.id }}">
+                Avaliar cliente
+            </a>
+
         {% endif %}
 
     {% endif %}
