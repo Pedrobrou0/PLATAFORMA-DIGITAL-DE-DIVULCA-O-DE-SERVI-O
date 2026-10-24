@@ -49,47 +49,72 @@
 
     {% if solicitacao.status == 'PENDENTE' %}
 
-        <form method="post" action="{% url 'aceitar_solicitacao' solicitacao.id %}">
-            {% csrf_token %}
-            <button type="submit">Aceitar</button>
-        </form>
+        {% if eh_profissional_dono %}
 
-        <form method="post" action="{% url 'recusar_solicitacao' solicitacao.id %}">
-            {% csrf_token %}
-            <button type="submit">Recusar</button>
-        </form>
+            <form method="post" action="{% url 'aceitar_solicitacao' solicitacao.id %}">
+                {% csrf_token %}
+                <button type="submit">Aceitar</button>
+            </form>
 
-        <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
-            {% csrf_token %}
-            <button type="submit">Cancelar</button>
-        </form>
+            <form method="post" action="{% url 'recusar_solicitacao' solicitacao.id %}">
+                {% csrf_token %}
+                <button type="submit">Recusar</button>
+            </form>
+
+        {% endif %}
+
+        {% if eh_cliente_dono %}
+
+            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+                {% csrf_token %}
+                <button type="submit">Cancelar</button>
+            </form>
+
+        {% endif %}
 
     {% elif solicitacao.status == 'ACEITA' %}
 
-        <form method="post" action="{% url 'concluir_solicitacao' solicitacao.id %}">
-            {% csrf_token %}
-            <button type="submit">Concluir</button>
-        </form>
+        {% if eh_profissional_dono %}
 
-        <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
-            {% csrf_token %}
-            <button type="submit">Cancelar</button>
-        </form>
+            <form method="post" action="{% url 'concluir_solicitacao' solicitacao.id %}">
+                {% csrf_token %}
+                <button type="submit">Concluir</button>
+            </form>
+
+        {% endif %}
+
+        {% if eh_cliente_dono %}
+
+            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+                {% csrf_token %}
+                <button type="submit">Cancelar</button>
+            </form>
+
+        {% endif %}
 
     {% endif %}
+
     <p>
         Data:
         {{ solicitacao.data_solicitacao }}
     </p>
 
-    <a href="{% url 'editar_solicitacao' solicitacao.id %}">
-        Editar
-    </a>
+    {% if eh_cliente_dono and solicitacao.status == 'PENDENTE' %}
 
-    |
+        <a href="{% url 'editar_solicitacao' solicitacao.id %}">
+            Editar
+        </a>
 
-    <a href="{% url 'deletar_solicitacao' solicitacao.id %}">
-        Excluir
-    </a>
+    {% endif %}
+
+    {% if perms.interacoes.delete_solicitacao %}
+
+        |
+
+        <a href="{% url 'deletar_solicitacao' solicitacao.id %}">
+            Excluir
+        </a>
+
+    {% endif %}
 
 {% endblock %}

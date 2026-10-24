@@ -11,12 +11,16 @@
 {% block content %}
 
     <h2>
-        Solicitações
+        {{ titulo }}
     </h2>
 
-    <a href="{% url 'criar_solicitacao' %}">
-        Nova solicitação
-    </a>
+    {% if perms.interacoes.add_solicitacao %}
+
+        <a href="{% url 'lista_servicos' %}">
+            Solicitar um novo serviço
+        </a>
+
+    {% endif %}
 
     <ul>
 
@@ -24,6 +28,8 @@
 
             <li>
                 {{ solicitacao.servico.titulo }}
+                —
+                {{ solicitacao.cliente }}
                 —
                 {{ solicitacao.get_status_display }}
 
