@@ -102,6 +102,8 @@ def editar_solicitacao(request, id):
         return redirect('detalhe_solicitacao', id=solicitacao.id)
 
     form = SolicitacaoEditarForm(
+        request.POST or None,
+        instance=solicitacao
     )
 
     if form.is_valid():

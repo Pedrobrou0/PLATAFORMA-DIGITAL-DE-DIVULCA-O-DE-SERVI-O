@@ -83,3 +83,5 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+Claude outputs/

@@ -123,7 +123,7 @@ def detalhe_servico(request, id):
     })
 
 
-d@login_required
+@login_required
 @permission_required('servicos.add_servico', raise_exception=True)
 def criar_servico(request):
     # Só quem tem perfil de Profissional publica serviço.
