@@ -10,6 +10,34 @@
         Bem-vindo à Plataforma de Serviços Autônomos
     </h2>
 
+    {% if user.is_authenticated %}
+
+        <p>
+            Olá, {{ user.first_name|default:user.username }}!
+
+            <a href="{% url 'minha_conta' %}">
+                Minha conta
+            </a>
+        </p>
+
+    {% else %}
+
+        <p>
+            <a href="{% url 'login' %}">
+                Entre
+            </a>
+
+            ou
+
+            <a href="{% url 'cadastro' %}">
+                cadastre-se
+            </a>
+
+            para solicitar serviços ou divulgar o seu trabalho.
+        </p>
+
+    {% endif %}
+
     <h3>
         Profissionais em destaque
     </h3>

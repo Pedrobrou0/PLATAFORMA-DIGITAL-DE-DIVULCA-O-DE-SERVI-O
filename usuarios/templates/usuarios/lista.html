@@ -12,11 +12,15 @@
 
     <h2>
         Profissionais
-    </h2>
+   </h2>
 
-    <a href="{% url 'criar_profissional' %}">
-        Novo profissional
-    </a>
+    {% if not user.is_authenticated %}
+
+        <a href="{% url 'criar_profissional' %}">
+            Cadastre-se como profissional
+        </a>
+
+    {% endif %}
 
     <ul>
 
