@@ -16,9 +16,14 @@ GRUPO_ADMINISTRADOR = 'Administrador'
 
 PERMISSOES_POR_GRUPO = {
     GRUPO_CLIENTE: [
+        # Consultar Profissionais e Serviços (só logado)
+        'usuarios.view_profissional',
+        'servicos.view_categoria',
+        'servicos.view_servico',
+        'suporte.view_avaliacao',
+
         # Solicitar Serviço / Acompanhar Solicitações
         'interacoes.add_solicitacao',
-        'interacoes.view_solicitacao',
 
         # Avaliar Usuário
         'suporte.add_avaliacao',
@@ -30,6 +35,11 @@ PERMISSOES_POR_GRUPO = {
     ],
 
     GRUPO_PROFISSIONAL: [
+        # Consultar Profissionais e Serviços (só logado)
+        'usuarios.view_profissional',
+        'servicos.view_categoria',
+        'suporte.view_avaliacao',
+
         # Manter Serviços
         'servicos.add_servico',
         'servicos.change_servico',
@@ -50,6 +60,11 @@ PERMISSOES_POR_GRUPO = {
     ],
 
     GRUPO_ADMINISTRADOR: [
+        # Consultar Profissionais e Serviços
+        'usuarios.view_profissional',
+        'servicos.view_servico',
+        'suporte.view_avaliacao',
+
         # Manter Categoria
         'servicos.add_categoria',
         'servicos.change_categoria',
