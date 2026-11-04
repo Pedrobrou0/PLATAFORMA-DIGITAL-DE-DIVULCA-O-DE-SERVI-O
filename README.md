@@ -23,6 +23,8 @@ O projeto está sendo desenvolvido como atividade acadêmica da disciplina de Pr
 - [Solução de problemas comuns](#solução-de-problemas-comuns)
 - [Boas práticas](#boas-práticas)
 - [Fluxo de trabalho com Git](#fluxo-de-trabalho-com-git)
+- [Autenticação e permissões](#autenticação-e-permissões)
+- [Interface (front-end)](#interface-front-end)
 - [Documentação técnica](#documentação-técnica)
 - [Equipe](#equipe)
 - [Licença](#licença)
@@ -58,7 +60,8 @@ O público-alvo do sistema são profissionais autônomos que prestam serviços (
 - HTML5
 - CSS3
 - JavaScript
-- Bootstrap
+- Bootstrap 4 com o tema AdminLTE 3
+- Font Awesome 5
 - Git
 - GitHub
 
