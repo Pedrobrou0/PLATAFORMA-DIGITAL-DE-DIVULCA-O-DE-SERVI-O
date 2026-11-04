@@ -1,53 +1,79 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Meus serviços{% endblock %}
 
-{% block title %}
+{% block page_title %}Meus serviços{% endblock %}
 
-    Meus serviços
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Meus serviços</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Meus serviços
-    </h2>
+    <div class="card">
 
-    <a href="{% url 'criar_servico' %}">
-        Novo serviço
-    </a>
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-toolbox mr-1"></i> Serviços que eu ofereço</h3>
 
-    <ul>
-
-        {% for servico in servicos %}
-
-            <li>
-                {{ servico.titulo }}
-                —
-                R$ {{ servico.preco }}
-                —
-                {% if servico.ativo %}Ativo{% else %}Inativo{% endif %}
-
-                <a href="{% url 'detalhe_servico' servico.id %}">
-                    Detalhar
+            <div class="card-tools">
+                <a href="{% url 'criar_servico' %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus mr-1"></i> Novo serviço
                 </a>
+            </div>
+        </div>
 
-                |
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
 
-                <a href="{% url 'editar_servico' servico.id %}">
-                    Editar
-                </a>
-            </li>
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Categoria</th>
+                            <th class="text-right">Preço</th>
+                            <th>Status</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
 
-        {% empty %}
+                    <tbody>
+                        {% for servico in servicos %}
+                            <tr>
+                                <td>{{ servico.titulo }}</td>
+                                <td>{{ servico.categoria }}</td>
+                                <td class="text-right text-nowrap">R$ {{ servico.preco }}</td>
+                                <td>
+                                    {% if servico.ativo %}
+                                        <span class="badge badge-success">Ativo</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Inativo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right text-nowrap">
+                                    <a href="{% url 'detalhe_servico' servico.id %}" class="btn btn-sm btn-default" title="Ver">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'editar_servico' servico.id %}" class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'deletar_servico' servico.id %}" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    Você ainda não cadastrou nenhum serviço.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
 
-            <li>
-                Você ainda não cadastrou nenhum serviço.
-            </li>
+                </table>
+            </div>
+        </div>
 
-        {% endfor %}
-
-    </ul>
+    </div>
 
 {% endblock %}

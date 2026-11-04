@@ -1,42 +1,15 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Confirmar exclusão
+{% block title %}Confirmar exclusão{% endblock %}
+
+{% block page_title %}Confirmar exclusão{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Excluir</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        Confirmar exclusão
-    </h2>
-
-    {% if erro %}
-
-        <p style="color: red;">
-            {{ erro }}
-        </p>
-
-    {% endif %}
-
-    <p>
-        Tem certeza que deseja excluir
-        "{{ objeto }}"?
-    </p>
-
-    <form method="post">
-
-        {% csrf_token %}
-
-        <button type="submit">
-            Sim, excluir
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="{% url lista_url %}">
-        Cancelar
-    </a>
+    {% include 'partials/confirmar_delete.html' %}
 
 {% endblock %}
