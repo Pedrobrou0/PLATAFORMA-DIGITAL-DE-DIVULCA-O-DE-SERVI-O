@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
@@ -84,6 +85,8 @@ def criar_solicitacao(request):
         solicitacao.cliente = request.user
         solicitacao.save()
 
+        messages.success(request, 'Solicitação enviada! Agora é só aguardar a resposta do profissional.')
+
         return redirect('detalhe_solicitacao', id=solicitacao.id)
 
     return render(request, 'interacoes/form.html', {
@@ -99,6 +102,8 @@ def editar_solicitacao(request, id):
 
     # Só dá para editar enquanto o profissional não respondeu.
     if solicitacao.status != StatusSolicitacao.PENDENTE:
+        messages.warning(request, 'Esta solicitação já foi respondida e não pode mais ser editada.')
+
         return redirect('detalhe_solicitacao', id=solicitacao.id)
 
     form = SolicitacaoEditarForm(
@@ -108,6 +113,8 @@ def editar_solicitacao(request, id):
 
     if form.is_valid():
         form.save()
+
+        messages.success(request, 'Solicitação atualizada.')
 
         return redirect('detalhe_solicitacao', id=solicitacao.id)
 
@@ -123,6 +130,8 @@ def deletar_solicitacao(request, id):
 
     if request.method == 'POST':
         solicitacao.delete()
+
+        messages.success(request, 'Solicitação excluída.')
 
         return redirect('lista_solicitacoes')
 
@@ -141,6 +150,8 @@ def aceitar_solicitacao(request, id):
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.aceitar()
 
+        messages.success(request, 'Solicitação aceita.')
+
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
 
@@ -153,6 +164,8 @@ def recusar_solicitacao(request, id):
 
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.PENDENTE:
         solicitacao.recusar()
+
+        messages.success(request, 'Solicitação recusada.')
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
@@ -169,6 +182,8 @@ def cancelar_solicitacao(request, id):
     ]:
         solicitacao.cancelar()
 
+        messages.info(request, 'Solicitação cancelada.')
+
     return redirect('detalhe_solicitacao', id=solicitacao.id)
 
 
@@ -181,5 +196,7 @@ def concluir_solicitacao(request, id):
 
     if request.method == 'POST' and solicitacao.status == StatusSolicitacao.ACEITA:
         solicitacao.concluir()
+
+        messages.success(request, 'Serviço concluído! Que tal avaliar o cliente?')
 
     return redirect('detalhe_solicitacao', id=solicitacao.id)
