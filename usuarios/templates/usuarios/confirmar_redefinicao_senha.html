@@ -1,42 +1,38 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base_acesso.html' %}
 
-
-{% block title %}
-
-    Nova senha
-
-{% endblock %}
-
+{% block title %}Nova senha{% endblock %}
 
 {% block content %}
 
-    <h2>
-        Criar nova senha
-    </h2>
-
     {% if link_valido %}
+
+        <p class="login-box-msg">Crie a sua nova senha</p>
 
         <form method="post">
 
             {% csrf_token %}
 
-            {{ form.as_p }}
+            {% include 'partials/form_campos.html' %}
 
-            <button type="submit">
-                Salvar nova senha
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-save mr-1"></i> Salvar nova senha
             </button>
 
         </form>
 
     {% else %}
 
-        <p>
+        <div class="alert alert-warning">
+            <i class="icon fas fa-exclamation-triangle"></i>
             Este link de redefinição é inválido ou já foi usado.
+        </div>
+
+        <p class="text-muted">
             Volte para o login e clique em "Esqueci minha senha"
             para receber um novo link.
         </p>
 
-        <a href="{% url 'login' %}">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-block">
             Voltar para o login
         </a>
 

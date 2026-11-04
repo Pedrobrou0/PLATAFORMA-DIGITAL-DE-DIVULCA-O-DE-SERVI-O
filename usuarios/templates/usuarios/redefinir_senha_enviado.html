@@ -1,26 +1,22 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base_acesso.html' %}
 
-
-{% block title %}
-
-    E-mail enviado
-
-{% endblock %}
-
+{% block title %}E-mail enviado{% endblock %}
 
 {% block content %}
 
-    <h2>
-        Verifique seu e-mail
-    </h2>
+    <div class="text-center">
+        <i class="fas fa-envelope-open-text fa-3x text-primary mb-3"></i>
 
-    <p>
-        Se existir uma conta com o e-mail informado, enviamos um link
-        para você criar uma nova senha.
-    </p>
+        <h5>Verifique seu e-mail</h5>
 
-    <a href="{% url 'login' %}">
-        Voltar para o login
-    </a>
+        <p class="text-muted">
+            Se existir uma conta com o e-mail informado, enviamos um link
+            para você criar uma nova senha.
+        </p>
+
+        <a href="{% url 'login' %}" class="btn btn-primary btn-block">
+            Voltar para o login
+        </a>
+    </div>
 
 {% endblock %}
