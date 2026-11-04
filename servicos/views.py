@@ -135,7 +135,7 @@ def criar_servico(request):
         request.FILES or None
     )
 
-   if form.is_valid():
+    if form.is_valid():
         servico = form.save(commit=False)
         servico.profissional = request.user.profissional
         servico.save()
