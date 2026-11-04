@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import (
@@ -11,14 +12,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
-from django.db.models import ProtectedError
+from django.db.models import Count, ProtectedError, Q
 from django.utils.http import (
     url_has_allowed_host_and_scheme,
     urlsafe_base64_decode,
 )
 from .models import Profissional
 from .forms import (
-
     ClienteCadastroForm,
     ProfissionalCadastroForm,
     ProfissionalForm,
@@ -27,19 +27,60 @@ from .permissoes import (
     GRUPO_CLIENTE,
     GRUPO_PROFISSIONAL,
     adicionar_ao_grupo,
+    eh_administrador,
+    eh_profissional,
     pode_gerenciar,
 )
-from servicos.models import Servico
+from interacoes.models import Solicitacao, StatusSolicitacao
+from servicos.models import Categoria, Servico
+from suporte.models import Feedback, StatusFeedback
 
 
 def home(request):
-    profissionais = Profissional.objects.all()[:6]
-    servicos = Servico.objects.filter(ativo=True)[:6]
+    # Página inicial com destaques (RF018) no formato de dashboard.
+    contexto = {
+        'total_servicos': Servico.objects.filter(ativo=True).count(),
+        'total_profissionais': Profissional.objects.count(),
+        'total_categorias': Categoria.objects.count(),
 
-    return render(request, 'usuarios/home.html', {
-        'profissionais': profissionais,
-        'servicos': servicos
-    })
+        'servicos': Servico.objects.filter(
+            ativo=True
+        ).order_by('-data_cadastro')[:6],
+
+        'categorias': Categoria.objects.annotate(
+            qtd_servicos=Count('servicos', filter=Q(servicos__ativo=True))
+        ).order_by('-qtd_servicos', 'nome')[:6],
+
+        'profissionais': Profissional.objects.order_by('-date_joined')[:5],
+    }
+
+    if request.user.is_authenticated:
+        if eh_administrador(request.user):
+            solicitacoes = Solicitacao.objects.all()
+            contexto['rotulo_solicitacoes'] = 'Solicitações pendentes'
+        elif eh_profissional(request.user):
+            solicitacoes = Solicitacao.objects.filter(
+                servico__profissional_id=request.user.id
+            )
+            contexto['rotulo_solicitacoes'] = 'Pedidos esperando resposta'
+        else:
+            solicitacoes = Solicitacao.objects.filter(cliente=request.user)
+            contexto['rotulo_solicitacoes'] = 'Minhas solicitações pendentes'
+
+        contexto['solicitacoes_pendentes'] = solicitacoes.filter(
+            status=StatusSolicitacao.PENDENTE
+        ).count()
+
+        contexto['ultimas_solicitacoes'] = solicitacoes.order_by(
+            '-data_solicitacao'
+        )[:5]
+
+        if request.user.has_perm('suporte.view_feedback'):
+            contexto['feedbacks_pendentes'] = Feedback.objects.filter(
+                status=StatusFeedback.PENDENTE
+            ).count()
+
+    return render(request, 'usuarios/home.html', contexto)
 
 
 def lista_profissionais(request):
@@ -74,6 +115,8 @@ def criar_profissional(request):
 
         login(request, profissional)
 
+        messages.success(request, 'Cadastro concluído! Agora publique o seu primeiro serviço.')
+
         return redirect('detalhe_profissional', id=profissional.id)
 
     return render(request, 'usuarios/cadastro_form.html', {
@@ -96,9 +139,11 @@ def editar_profissional(request, id):
     )
 
     if form.is_valid():
-       form.save()
+        form.save()
 
-    return redirect('detalhe_profissional', id=profissional.id)
+        messages.success(request, 'Perfil atualizado.')
+
+        return redirect('detalhe_profissional', id=profissional.id)
 
     return render(request, 'usuarios/form.html', {
         'form': form
@@ -127,12 +172,16 @@ def deletar_profissional(request, id):
         if proprio_usuario:
             logout(request)
 
+        messages.success(request, 'Profissional excluído.')
+
         return redirect('lista_profissionais')
 
     return render(request, 'usuarios/confirmar_delete.html', {
         'objeto': profissional,
         'lista_url': 'lista_profissionais'
     })
+
+
 def entrar(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -143,7 +192,13 @@ def entrar(request):
     )
 
     if form.is_valid():
-        login(request, form.get_user())
+        usuario = form.get_user()
+        login(request, usuario)
+
+        messages.success(
+            request,
+            f'Bem-vindo, {usuario.first_name or usuario.username}!'
+        )
 
         proxima = request.POST.get('next') or request.GET.get('next')
 
@@ -161,11 +216,15 @@ def entrar(request):
         'next': request.GET.get('next', '')
     })
 
+
 def sair(request):
     if request.method == 'POST':
         logout(request)
 
+        messages.info(request, 'Você saiu da sua conta.')
+
     return redirect(settings.LOGOUT_REDIRECT_URL)
+
 
 def cadastro(request):
     if request.user.is_authenticated:
@@ -187,12 +246,15 @@ def cadastro_cliente(request):
 
         login(request, cliente)
 
+        messages.success(request, 'Cadastro concluído! Já pode solicitar serviços.')
+
         return redirect('home')
 
     return render(request, 'usuarios/cadastro_form.html', {
         'form': form,
         'titulo': 'Cadastro de cliente'
     })
+
 
 @login_required
 def alterar_senha(request):
@@ -207,7 +269,9 @@ def alterar_senha(request):
         # Mantém o usuário logado depois de trocar a senha.
         update_session_auth_hash(request, usuario)
 
-        return redirect('home')
+        messages.success(request, 'Senha alterada.')
+
+        return redirect('minha_conta')
 
     return render(request, 'usuarios/senha_form.html', {
         'form': form,
@@ -272,6 +336,7 @@ def confirmar_redefinicao_senha(request, uidb64, token):
 def redefinir_senha_concluido(request):
     return render(request, 'usuarios/redefinir_senha_concluido.html')
 
+
 @login_required
 def excluir_conta(request):
     if request.method == 'POST':
@@ -286,9 +351,12 @@ def excluir_conta(request):
 
         logout(request)
 
+        messages.success(request, 'Sua conta foi excluída.')
+
         return redirect('home')
 
     return render(request, 'usuarios/excluir_conta.html')
+
 
 @login_required
 def minha_conta(request):
