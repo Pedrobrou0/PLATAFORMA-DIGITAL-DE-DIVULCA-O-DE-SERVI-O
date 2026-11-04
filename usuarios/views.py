@@ -314,3 +314,9 @@ def excluir_conta(request):
         return redirect('home')
 
     return render(request, 'usuarios/excluir_conta.html')
+
+@login_required
+def minha_conta(request):
+    return render(request, 'usuarios/minha_conta.html', {
+        'grupos': request.user.groups.all()
+    })

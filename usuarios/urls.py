@@ -83,5 +83,10 @@ urlpatterns = [
         views.excluir_conta,
         name='excluir_conta'
     ),
+    path(
+        'conta/',
+        views.minha_conta,
+        name='minha_conta'
+    ),
 ]
 

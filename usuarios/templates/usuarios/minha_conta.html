@@ -1,0 +1,79 @@
+{% extends 'usuarios/base.html' %}
+
+
+{% block title %}
+
+    Minha conta
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        Minha conta
+    </h2>
+
+    <p>
+        Usuário:
+        {{ user.username }}
+    </p>
+
+    <p>
+        Nome:
+        {{ user.first_name }}
+        {{ user.last_name }}
+    </p>
+
+    <p>
+        E-mail:
+        {{ user.email }}
+    </p>
+
+    <p>
+        Perfil:
+
+        {% for grupo in grupos %}
+            {{ grupo.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            {% if user.is_superuser %}
+                Administrador (superusuário)
+            {% else %}
+                Sem perfil definido
+            {% endif %}
+        {% endfor %}
+    </p>
+
+    <ul>
+
+        {% if user.profissional %}
+
+            <li>
+                <a href="{% url 'detalhe_profissional' user.id %}">
+                    Ver meu perfil público
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'editar_profissional' user.id %}">
+                    Editar meu perfil
+                </a>
+            </li>
+
+        {% endif %}
+
+        <li>
+            <a href="{% url 'alterar_senha' %}">
+                Alterar senha
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'excluir_conta' %}">
+                Excluir conta
+            </a>
+        </li>
+
+    </ul>
+
+{% endblock %}
