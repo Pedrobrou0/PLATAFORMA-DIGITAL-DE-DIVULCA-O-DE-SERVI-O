@@ -584,6 +584,44 @@ Recomendações:
 - Um commit por alteração lógica, sempre que possível — facilita revisar o histórico depois.
 - Resolver conflitos de merge localmente antes de dar `git push`.
 
+## Autenticação e permissões
+
+A autenticação usa o `django.contrib.auth`, com as classes `User`, `Group` e `Permission` que aparecem no Diagrama de Classes. Cada ator do Documento de Casos de Uso é um grupo:
+
+| Ator | No Django | O que pode fazer |
+|---|---|---|
+| Visitante | Usuário não logado | Consultar profissionais, serviços, categorias e avaliações; cadastrar-se; entrar |
+| Cliente | Grupo `Cliente` | Solicitar serviço, acompanhar e cancelar as próprias solicitações, avaliar profissional, enviar feedback |
+| Profissional | `Profissional` (herda `User`) no grupo `Profissional` | Manter os próprios serviços, gerenciar solicitações recebidas, avaliar cliente, enviar feedback |
+| Administrador | Superusuário ou grupo `Administrador` | Manter categorias, gerenciar feedbacks, moderar e gerenciar usuários no `/admin` |
+
+As views são todas FBV e usam `@login_required` e `@permission_required`. Quando o objeto é de outra pessoa, a view lança `PermissionDenied` e aparece a página 403.
+
+Depois do `migrate`, crie os grupos e as permissões com:
+
+```bash
+python manage.py criar_grupos
+```
+
+## Interface (front-end)
+
+A interface usa o tema gratuito **AdminLTE 3** (Bootstrap 4), com menu lateral, barra do topo e painel na página inicial.
+
+```
+static/assets/          # arquivos do AdminLTE (CSS, JS, ícones)
+templates/
+├── base.html           # layout do site: menu lateral, topo, mensagens e rodapé
+├── base_acesso.html    # layout das telas de login, cadastro e senha
+└── partials/           # pedaços reaproveitados (menu, topo, mensagens, formulários)
+usuarios/templatetags/formularios.py   # filtro que aplica as classes do Bootstrap nos campos
+```
+
+- **Arquivos estáticos:** ficam em `static/assets/` e são carregados nos templates com `{% load static %}` e `{% static 'assets/...' %}`. O `settings.py` aponta para a pasta em `STATICFILES_DIRS`.
+- **Herança de templates:** todas as páginas usam `{% extends 'base.html' %}` e preenchem os blocos `title`, `page_title`, `breadcrumb` e `content`.
+- **Menu por perfil:** o menu lateral muda conforme quem está logado (`user.is_authenticated`, `user.profissional` e `perms`).
+- **Mensagens:** as views usam `django.contrib.messages` (`messages.success`, `messages.info` etc.) e o `base.html` mostra cada mensagem como alerta do Bootstrap.
+- **Formulários:** o template `partials/form_campos.html` desenha cada campo com label, ajuda e erros, usando o filtro `{{ campo|bootstrap }}`.
+
 ## Documentação técnica
 
 ### Diagrama de Classes
@@ -612,6 +650,6 @@ Este é um projeto acadêmico, desenvolvido para fins educacionais no âmbito da
 
 ## Status do projeto
 
-Projeto acadêmico em desenvolvimento.
+Projeto acadêmico em fase de entrega final.
 
-A estrutura inicial do Django e a organização dos aplicativos estão configuradas. Os CRUDs de `usuarios`, `servicos` e `interacoes` já estão implementados. As funcionalidades e regras de negócio restantes — CRUD de tela do `suporte`, ações de aceitar/recusar/cancelar solicitação, busca por categoria e por palavra-chave, e página inicial — serão implementadas progressivamente durante o desenvolvimento.
+Os CRUDs de profissionais, categorias, serviços, solicitações, feedbacks e avaliações estão completos, com autenticação e permissões pelo `django.contrib.auth` e interface no tema AdminLTE 3 (Bootstrap 4).
