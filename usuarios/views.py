@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
@@ -38,7 +38,7 @@ from interacoes.models import Solicitacao, StatusSolicitacao
 from servicos.models import Categoria, Servico
 from suporte.models import Feedback, StatusFeedback, TipoAutorAvaliacao
 
-
+@login_required
 def home(request):
     # Página inicial com destaques (RF018) no formato de dashboard.
     contexto = {
@@ -86,6 +86,8 @@ def home(request):
     return render(request, 'usuarios/home.html', contexto)
 
 
+@login_required
+@permission_required('usuarios.view_profissional', raise_exception=True)
 def lista_profissionais(request):
     profissionais = Profissional.objects.all()
 
@@ -94,6 +96,8 @@ def lista_profissionais(request):
     })
 
 
+@login_required
+@permission_required('usuarios.view_profissional', raise_exception=True)
 def detalhe_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
 
@@ -229,6 +233,7 @@ def entrar(request):
     })
 
 
+@login_required
 def sair(request):
     if request.method == 'POST':
         logout(request)
