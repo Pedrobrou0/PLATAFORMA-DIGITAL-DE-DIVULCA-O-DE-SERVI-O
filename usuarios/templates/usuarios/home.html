@@ -1,95 +1,300 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Início
-{% endblock %}
+{% block title %}Início{% endblock %}
+
+{% block page_title %}Painel{% endblock %}
 
 {% block content %}
 
-    <h2>
-        Bem-vindo à Plataforma de Serviços Autônomos
-    </h2>
-
+    <!-- Boas-vindas conforme quem está usando o site -->
     {% if user.is_authenticated %}
 
-        <p>
-            Olá, {{ user.first_name|default:user.username }}!
+        <div class="callout callout-info">
+            <h5>Olá, {{ user.first_name|default:user.username }}!</h5>
 
-            <a href="{% url 'minha_conta' %}">
-                Minha conta
-            </a>
-        </p>
+            <p class="mb-0">
+                {% if user.profissional %}
+                    Acompanhe os pedidos que chegaram e mantenha seus serviços atualizados.
+                {% elif perms.servicos.add_categoria %}
+                    Você está no painel de administração da plataforma.
+                {% else %}
+                    Encontre um profissional, solicite o serviço e acompanhe tudo por aqui.
+                {% endif %}
+            </p>
+        </div>
 
     {% else %}
 
-        <p>
-            <a href="{% url 'login' %}">
-                Entre
-            </a>
+        <div class="callout callout-info">
+            <h5>Bem-vindo à Plataforma de Serviços Autônomos</h5>
 
-            ou
-
-            <a href="{% url 'cadastro' %}">
-                cadastre-se
-            </a>
-
-            para solicitar serviços ou divulgar o seu trabalho.
-        </p>
+            <p class="mb-0">
+                Encontre profissionais autônomos de Guanambi e região.
+                <a href="{% url 'login' %}">Entre</a> ou
+                <a href="{% url 'cadastro' %}">cadastre-se</a>
+                para solicitar serviços ou divulgar o seu trabalho.
+            </p>
+        </div>
 
     {% endif %}
 
-    <h3>
-        Profissionais em destaque
-    </h3>
+    <!-- Números da plataforma -->
+    <div class="row">
 
-    <ul>
-
-        {% for profissional in profissionais %}
-
-            <li>
-                {{ profissional }}
-
-                <a href="{% url 'detalhe_profissional' profissional.id %}">
-                    Ver perfil
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ total_servicos }}</h3>
+                    <p>Serviços disponíveis</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <a href="{% url 'lista_servicos' %}" class="small-box-footer">
+                    Ver serviços <i class="fas fa-arrow-circle-right"></i>
                 </a>
-            </li>
+            </div>
+        </div>
 
-        {% empty %}
-
-            <li>
-                Nenhum profissional cadastrado ainda.
-            </li>
-
-        {% endfor %}
-
-    </ul>
-
-    <h3>
-        Serviços em destaque
-    </h3>
-
-    <ul>
-
-        {% for servico in servicos %}
-
-            <li>
-                {{ servico.titulo }}
-                —
-                {{ servico.profissional }}
-
-                <a href="{% url 'detalhe_servico' servico.id %}">
-                    Ver serviço
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ total_profissionais }}</h3>
+                    <p>Profissionais cadastrados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <a href="{% url 'lista_profissionais' %}" class="small-box-footer">
+                    Ver profissionais <i class="fas fa-arrow-circle-right"></i>
                 </a>
-            </li>
+            </div>
+        </div>
 
-        {% empty %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ total_categorias }}</h3>
+                    <p>Categorias</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <a href="{% url 'lista_categorias' %}" class="small-box-footer">
+                    Ver categorias <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
 
-            <li>
-                Nenhum serviço cadastrado ainda.
-            </li>
+        <div class="col-lg-3 col-6">
+            {% if user.is_authenticated %}
 
-        {% endfor %}
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ solicitacoes_pendentes }}</h3>
+                        <p>{{ rotulo_solicitacoes }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <a href="{% url 'lista_solicitacoes' %}" class="small-box-footer">
+                        Ver solicitações <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
 
-    </ul>
+            {% else %}
+
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3><i class="fas fa-user-plus"></i></h3>
+                        <p>Crie sua conta grátis</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <a href="{% url 'cadastro' %}" class="small-box-footer">
+                        Cadastre-se <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% if feedbacks_pendentes is not None %}
+
+        <!-- Só para o Administrador (Gerenciar Feedbacks) -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-box">
+                    <span class="info-box-icon bg-secondary elevation-1">
+                        <i class="fas fa-comment-dots"></i>
+                    </span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Feedbacks pendentes</span>
+                        <span class="info-box-number">{{ feedbacks_pendentes }}</span>
+                        <a href="{% url 'lista_feedbacks' %}" class="small">Gerenciar feedbacks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <div class="row">
+
+        <!-- Serviços mais recentes -->
+        <div class="col-lg-8">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-briefcase mr-1"></i>
+                        Serviços mais recentes
+                    </h3>
+
+                    <div class="card-tools">
+                        <a href="{% url 'lista_servicos' %}" class="btn btn-tool">Ver todos</a>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+
+                            <thead>
+                                <tr>
+                                    <th>Serviço</th>
+                                    <th>Categoria</th>
+                                    <th>Profissional</th>
+                                    <th class="text-right">Preço</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for servico in servicos %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'detalhe_servico' servico.id %}">{{ servico.titulo }}</a>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-light">{{ servico.categoria }}</span>
+                                        </td>
+                                        <td>{{ servico.profissional }}</td>
+                                        <td class="text-right text-nowrap">R$ {{ servico.preco }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            Nenhum serviço publicado ainda.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            {% if user.is_authenticated %}
+
+                <!-- Últimas solicitações de quem está logado -->
+                <div class="card">
+
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-clipboard-list mr-1"></i>
+                            Últimas solicitações
+                        </h3>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for solicitacao in ultimas_solicitacoes %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
+                                        {{ solicitacao.servico.titulo }}
+                                        <small class="text-muted">· {{ solicitacao.data_solicitacao|date:'d/m/Y' }}</small>
+                                    </a>
+
+                                    {% include 'partials/status_solicitacao.html' %}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-muted">Nenhuma solicitação ainda.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <!-- Categorias em destaque (RF018) -->
+            <div class="card card-outline card-warning">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-tags mr-1"></i>
+                        Categorias em destaque
+                    </h3>
+                </div>
+
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for categoria in categorias %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{% url 'detalhe_categoria' categoria.id %}">{{ categoria.nome }}</a>
+
+                                <span class="badge badge-warning badge-pill">
+                                    {{ categoria.qtd_servicos }} serviço{{ categoria.qtd_servicos|pluralize }}
+                                </span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Nenhuma categoria cadastrada.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Profissionais que chegaram por último -->
+            <div class="card card-outline card-success">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-tie mr-1"></i>
+                        Novos profissionais
+                    </h3>
+                </div>
+
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for profissional in profissionais %}
+                            <li class="list-group-item">
+                                <a href="{% url 'detalhe_profissional' profissional.id %}">{{ profissional }}</a>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>{{ profissional.cidade }}
+                                </small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Nenhum profissional cadastrado.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
