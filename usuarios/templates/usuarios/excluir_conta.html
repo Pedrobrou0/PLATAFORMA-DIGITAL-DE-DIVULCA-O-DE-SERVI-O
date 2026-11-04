@@ -1,0 +1,46 @@
+{% extends 'usuarios/base.html' %}
+
+
+{% block title %}
+
+    Excluir conta
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h2>
+        Excluir conta
+    </h2>
+
+    {% if erro %}
+
+        <p style="color: red;">
+            {{ erro }}
+        </p>
+
+    {% endif %}
+
+    <p>
+        Tem certeza que deseja excluir a conta
+        "{{ user.username }}"? Esta ação não pode ser desfeita.
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Sim, excluir minha conta
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'home' %}">
+        Cancelar
+    </a>
+
+{% endblock %}

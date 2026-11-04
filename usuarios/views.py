@@ -296,3 +296,21 @@ def confirmar_redefinicao_senha(request, uidb64, token):
 
 def redefinir_senha_concluido(request):
     return render(request, 'usuarios/redefinir_senha_concluido.html')
+
+@login_required
+def excluir_conta(request):
+    if request.method == 'POST':
+        usuario = request.user
+
+        try:
+            usuario.delete()
+        except ProtectedError:
+            return render(request, 'usuarios/excluir_conta.html', {
+                'erro': 'Não é possível excluir sua conta porque existem solicitações vinculadas aos seus serviços.'
+            })
+
+        logout(request)
+
+        return redirect('home')
+
+    return render(request, 'usuarios/excluir_conta.html')

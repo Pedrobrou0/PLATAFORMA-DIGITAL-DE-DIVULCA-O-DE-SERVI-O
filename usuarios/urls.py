@@ -78,5 +78,10 @@ urlpatterns = [
         views.confirmar_redefinicao_senha,
         name='confirmar_redefinicao_senha'
     ),
+    path(
+        'conta/excluir/',
+        views.excluir_conta,
+        name='excluir_conta'
+    ),
 ]
 
