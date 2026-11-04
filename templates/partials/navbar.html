@@ -1,0 +1,107 @@
+{% comment %}
+    Barra do topo (main-header do AdminLTE).
+    Visitante: Entrar e Cadastre-se. Logado: menu da conta com Sair.
+{% endcomment %}
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+
+    <ul class="navbar-nav">
+
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button" title="Abrir ou fechar o menu">
+                <i class="fas fa-bars"></i>
+            </a>
+        </li>
+
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="{% url 'home' %}" class="nav-link">Início</a>
+        </li>
+
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="{% url 'lista_servicos' %}" class="nav-link">Serviços</a>
+        </li>
+
+    </ul>
+
+    <!-- Busca rápida de serviços por palavra-chave (RF015) -->
+    <form class="form-inline ml-3 d-none d-md-flex" method="get" action="{% url 'lista_servicos' %}">
+        <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" name="q" placeholder="Buscar serviço" aria-label="Buscar serviço">
+
+            <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit" title="Buscar">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <ul class="navbar-nav ml-auto">
+
+        {% if user.is_authenticated %}
+
+            <li class="nav-item dropdown">
+
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-user-circle"></i>
+                    <span class="d-none d-sm-inline ml-1">
+                        {{ user.first_name|default:user.username }}
+                    </span>
+                    <i class="fas fa-angle-down ml-1"></i>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+
+                    <span class="dropdown-header">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a href="{% url 'minha_conta' %}" class="dropdown-item">
+                        <i class="fas fa-id-card mr-2"></i> Minha conta
+                    </a>
+
+                    {% if user.profissional %}
+                        <a href="{% url 'detalhe_profissional' user.id %}" class="dropdown-item">
+                            <i class="fas fa-user-tie mr-2"></i> Meu perfil público
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'alterar_senha' %}" class="dropdown-item">
+                        <i class="fas fa-key mr-2"></i> Alterar senha
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                        </button>
+                    </form>
+
+                </div>
+
+            </li>
+
+        {% else %}
+
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Entrar
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{% url 'cadastro' %}" class="btn btn-primary btn-sm mt-1 ml-1">
+                    Cadastre-se
+                </a>
+            </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
