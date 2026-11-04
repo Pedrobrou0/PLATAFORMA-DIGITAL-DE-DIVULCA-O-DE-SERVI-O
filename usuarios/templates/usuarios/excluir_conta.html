@@ -1,46 +1,70 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Excluir conta{% endblock %}
 
-{% block title %}
+{% block page_title %}Excluir conta{% endblock %}
 
-    Excluir conta
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'minha_conta' %}">Minha conta</a></li>
+    <li class="breadcrumb-item active">Excluir conta</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Excluir conta
-    </h2>
+    <div class="row">
 
-    {% if erro %}
+        <div class="col-lg-6">
 
-        <p style="color: red;">
-            {{ erro }}
-        </p>
+            <div class="card card-danger card-outline">
 
-    {% endif %}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-user-times mr-1"></i> Excluir minha conta</h3>
+                </div>
 
-    <p>
-        Tem certeza que deseja excluir a conta
-        "{{ user.username }}"? Esta ação não pode ser desfeita.
-    </p>
+                <div class="card-body">
 
-    <form method="post">
+                    {% if erro %}
 
-        {% csrf_token %}
+                        <div class="alert alert-danger">
+                            <i class="icon fas fa-ban"></i> {{ erro }}
+                        </div>
 
-        <button type="submit">
-            Sim, excluir minha conta
-        </button>
+                    {% else %}
 
-    </form>
+                        <p>
+                            Tem certeza que deseja excluir a conta
+                            <strong>"{{ user.username }}"</strong>?
+                        </p>
 
-    <br>
+                        <p class="text-danger mb-0">
+                            Esta ação não pode ser desfeita: seus dados, solicitações
+                            e avaliações serão apagados.
+                        </p>
 
-    <a href="{% url 'home' %}">
-        Cancelar
-    </a>
+                    {% endif %}
+
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+
+                    <a href="{% url 'minha_conta' %}" class="btn btn-default">Cancelar</a>
+
+                    {% if not erro %}
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-user-times mr-1"></i> Sim, excluir minha conta
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}

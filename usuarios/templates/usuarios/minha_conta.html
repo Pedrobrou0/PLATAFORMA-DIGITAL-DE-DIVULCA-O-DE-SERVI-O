@@ -1,79 +1,116 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Minha conta{% endblock %}
 
-{% block title %}
+{% block page_title %}Minha conta{% endblock %}
 
-    Minha conta
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Minha conta</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Minha conta
-    </h2>
+    <div class="row">
 
-    <p>
-        Usuário:
-        {{ user.username }}
-    </p>
+        <div class="col-md-5">
 
-    <p>
-        Nome:
-        {{ user.first_name }}
-        {{ user.last_name }}
-    </p>
+            <div class="card card-primary card-outline">
 
-    <p>
-        E-mail:
-        {{ user.email }}
-    </p>
+                <div class="card-body box-profile">
 
-    <p>
-        Perfil:
+                    <div class="text-center">
+                        <i class="fas fa-user-circle fa-6x text-secondary"></i>
+                    </div>
 
-        {% for grupo in grupos %}
-            {{ grupo.name }}{% if not forloop.last %}, {% endif %}
-        {% empty %}
-            {% if user.is_superuser %}
-                Administrador (superusuário)
-            {% else %}
-                Sem perfil definido
-            {% endif %}
-        {% endfor %}
-    </p>
+                    <h3 class="profile-username text-center">
+                        {{ user.get_full_name|default:user.username }}
+                    </h3>
 
-    <ul>
+                    <p class="text-center">
+                        {% for grupo in grupos %}
+                            <span class="badge badge-primary">{{ grupo.name }}</span>
+                        {% empty %}
+                            {% if user.is_superuser %}
+                                <span class="badge badge-danger">Administrador (superusuário)</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Sem perfil definido</span>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
 
-        {% if user.profissional %}
+                    <ul class="list-group list-group-unbordered mb-0">
 
-            <li>
-                <a href="{% url 'detalhe_profissional' user.id %}">
-                    Ver meu perfil público
-                </a>
-            </li>
+                        <li class="list-group-item">
+                            <b>Usuário</b>
+                            <span class="float-right">{{ user.username }}</span>
+                        </li>
 
-            <li>
-                <a href="{% url 'editar_profissional' user.id %}">
-                    Editar meu perfil
-                </a>
-            </li>
+                        <li class="list-group-item">
+                            <b>E-mail</b>
+                            <span class="float-right">{{ user.email|default:'—' }}</span>
+                        </li>
 
-        {% endif %}
+                        <li class="list-group-item">
+                            <b>Membro desde</b>
+                            <span class="float-right">{{ user.date_joined|date:'d/m/Y' }}</span>
+                        </li>
 
-        <li>
-            <a href="{% url 'alterar_senha' %}">
-                Alterar senha
-            </a>
-        </li>
+                    </ul>
 
-        <li>
-            <a href="{% url 'excluir_conta' %}">
-                Excluir conta
-            </a>
-        </li>
+                </div>
 
-    </ul>
+            </div>
+
+        </div>
+
+        <div class="col-md-7">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-cog mr-1"></i> O que você quer fazer?</h3>
+                </div>
+
+                <div class="card-body p-0">
+
+                    <div class="list-group list-group-flush">
+
+                        {% if user.profissional %}
+
+                            <a href="{% url 'detalhe_profissional' user.id %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user-tie mr-2 text-primary"></i> Ver meu perfil público
+                            </a>
+
+                            <a href="{% url 'editar_profissional' user.id %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user-edit mr-2 text-primary"></i> Editar meu perfil
+                            </a>
+
+                            <a href="{% url 'meus_servicos' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-toolbox mr-2 text-primary"></i> Meus serviços
+                            </a>
+
+                        {% endif %}
+
+                        <a href="{% url 'lista_solicitacoes' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-clipboard-list mr-2 text-primary"></i> Solicitações
+                        </a>
+
+                        <a href="{% url 'alterar_senha' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-key mr-2 text-primary"></i> Alterar senha
+                        </a>
+
+                        <a href="{% url 'excluir_conta' %}" class="list-group-item list-group-item-action text-danger">
+                            <i class="fas fa-user-times mr-2"></i> Excluir conta
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
