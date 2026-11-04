@@ -1,211 +1,227 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
+{% load formularios %}
 
-{% block title %}
+{% block title %}{{ profissional }}{% endblock %}
 
-    Profissional
+{% block page_title %}Perfil do profissional{% endblock %}
 
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_profissionais' %}">Profissionais</a></li>
+    <li class="breadcrumb-item active">{{ profissional }}</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        {{ profissional }}
-    </h2>
+    <div class="row">
 
+        <!-- Coluna do perfil e contato (RF016 e RF017) -->
+        <div class="col-md-4">
 
-    {% if profissional.foto %}
+            <div class="card card-primary card-outline">
 
-        <img src="{{ profissional.foto.url }}"
-             alt="Foto de {{ profissional.get_full_name }}"
-             width="200">
+                <div class="card-body box-profile">
 
-    {% else %}
+                    <div class="text-center">
+                        {% if profissional.foto %}
+                            <img src="{{ profissional.foto.url }}"
+                                 alt="Foto de {{ profissional }}"
+                                 class="profile-user-img img-fluid img-circle"
+                                 style="width: 110px; height: 110px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-6x text-secondary"></i>
+                        {% endif %}
+                    </div>
 
-        <p>
-            Profissional sem foto.
-        </p>
+                    <h3 class="profile-username text-center">{{ profissional }}</h3>
 
-    {% endif %}
+                    <p class="text-muted text-center">
+                        <i class="fas fa-map-marker-alt mr-1"></i>{{ profissional.cidade }}
+                    </p>
 
+                    <ul class="list-group list-group-unbordered mb-3">
 
-    <p>
-        Usuário:
-        {{ profissional.username }}
-    </p>
+                        <li class="list-group-item">
+                            <b>Telefone</b>
+                            <span class="float-right">{{ profissional.telefone }}</span>
+                        </li>
 
-    <p>
-        Nome:
-        {{ profissional.first_name }}
-        {{ profissional.last_name }}
-    </p>
+                        <li class="list-group-item">
+                            <b>E-mail</b>
+                            <span class="float-right">{{ profissional.email|default:'—' }}</span>
+                        </li>
 
-    <p>
-        E-mail:
-        {{ profissional.email }}
-    </p>
+                        <li class="list-group-item">
+                            <b>Serviços</b>
+                            <span class="float-right">{{ profissional.servicos.count }}</span>
+                        </li>
 
-    <p>
-        Telefone:
-        {{ profissional.telefone }}
-    </p>
+                    </ul>
 
-    <p>
-        Cidade:
-        {{ profissional.cidade }}
-    </p>
+                    <a href="https://wa.me/{{ profissional.telefone|whatsapp }}" target="_blank" rel="noopener" class="btn btn-success btn-block">
+                        <i class="fab fa-whatsapp mr-1"></i> Chamar no WhatsApp
+                    </a>
 
-    <p>
-        Descrição:
-        {{ profissional.descricao }}
-    </p>
+                    {% if user.id == profissional.id or perms.usuarios.change_profissional %}
 
+                        <a href="{% url 'editar_profissional' profissional.id %}" class="btn btn-warning btn-block">
+                            <i class="fas fa-edit mr-1"></i> Editar perfil
+                        </a>
 
-    <h3>
-        Categorias
-    </h3>
-
-    <ul>
-
-        {% for categoria in profissional.categorias.all %}
-
-            <li>
-                {{ categoria.nome }}
-            </li>
-
-        {% empty %}
-
-            <li>
-                Nenhuma categoria.
-            </li>
-
-        {% endfor %}
-
-    </ul>
-
-
-    {% if user.id == profissional.id or perms.usuarios.change_profissional %}
-
-        <a href="{% url 'editar_profissional' profissional.id %}">
-            Editar
-        </a>
-
-        |
-
-        <a href="{% url 'deletar_profissional' profissional.id %}">
-            Excluir
-        </a>
-
-    {% endif %}
-
-
-    <h3>
-        Serviços
-    </h3>
-
-    <ul>
-
-        {% for servico in profissional.servicos.all %}
-
-            <li>
-
-                {{ servico.titulo }}
-
-                -
-
-                R$ {{ servico.preco }}
-
-                    <a href="{% url 'detalhe_servico' servico.id %}">
-                    Detalhar
-                </a>
-
-                {% if servico.ativo %}
-
-                    {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
-
-                        |
-
-                        <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
-                            Solicitar serviço
+                        <a href="{% url 'deletar_profissional' profissional.id %}" class="btn btn-outline-danger btn-block">
+                            <i class="fas fa-trash-alt mr-1"></i> Excluir
                         </a>
 
                     {% endif %}
 
-                {% else %}
+                </div>
 
-                    (inativo)
+            </div>
 
-                {% endif %}
+            <div class="card card-primary">
 
-            </li>
+                <div class="card-header">
+                    <h3 class="card-title">Sobre</h3>
+                </div>
 
-        {% empty %}
+                <div class="card-body">
 
-            <li>
-                Nenhum serviço cadastrado.
-            </li>
+                    <strong><i class="fas fa-align-left mr-1"></i> Descrição</strong>
+                    <p class="text-muted">{{ profissional.descricao|linebreaksbr }}</p>
 
-        {% endfor %}
+                    <hr>
 
-    </ul>
+                    <strong><i class="fas fa-tags mr-1"></i> Categorias</strong>
+                    <p class="mb-0">
+                        {% for categoria in profissional.categorias.all %}
+                            <a href="{% url 'detalhe_categoria' categoria.id %}" class="badge badge-primary">{{ categoria.nome }}</a>
+                        {% empty %}
+                            <span class="text-muted">Nenhuma categoria.</span>
+                        {% endfor %}
+                    </p>
 
-    {% if user.id == profissional.id %}
+                </div>
 
-        <h3>
-            Solicitações recebidas
-        </h3>
+            </div>
 
-        <ul>
+        </div>
 
-            {% for servico in profissional.servicos.all %}
-                {% for solicitacao in servico.solicitacoes.all %}
-                    <li>
-                        {{ solicitacao.servico.titulo }}
-                        —
-                        {{ solicitacao.cliente }}
-                        —
-                        {{ solicitacao.get_status_display }}
+        <div class="col-md-8">
 
-                        <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
-                            Detalhar
-                        </a>
-                    </li>
-                {% endfor %}
-            {% endfor %}
+            <!-- Serviços do profissional -->
+            <div class="card">
 
-        </ul>
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-briefcase mr-1"></i> Serviços</h3>
+                </div>
 
-    {% endif %}
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
 
+                            <thead>
+                                <tr>
+                                    <th>Serviço</th>
+                                    <th class="text-right">Preço</th>
+                                    <th class="text-right">Ações</th>
+                                </tr>
+                            </thead>
 
-    <h3>
-        Avaliações recebidas
-    </h3>
+                            <tbody>
+                                {% for servico in profissional.servicos.all %}
+                                    <tr>
+                                        <td>
+                                            {{ servico.titulo }}
+                                            {% if not servico.ativo %}
+                                                <span class="badge badge-secondary">Inativo</span>
+                                            {% endif %}
+                                        </td>
 
-    <ul>
+                                        <td class="text-right text-nowrap">R$ {{ servico.preco }}</td>
 
-        {% for avaliacao in profissional.avaliacoes_profissional.all %}
+                                        <td class="text-right text-nowrap">
+                                            <a href="{% url 'detalhe_servico' servico.id %}" class="btn btn-sm btn-default">Ver</a>
 
-            <li>
-                {{ avaliacao.cliente }}
-                —
-                nota {{ avaliacao.nota }}
-                —
-                {{ avaliacao.comentario }}
+                                            {% if servico.ativo %}
+                                                {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
+                                                    <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}" class="btn btn-sm btn-primary">
+                                                        Solicitar
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">Nenhum serviço cadastrado.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
 
-                <a href="{% url 'detalhe_avaliacao' avaliacao.id %}">
-                    Detalhar
-                </a>
-            </li>
+                        </table>
+                    </div>
+                </div>
 
-        {% empty %}
+            </div>
 
-            <li>
-                Nenhuma avaliação recebida.
-            </li>
+            <!-- Avaliações recebidas -->
+            <div class="card">
 
-        {% endfor %}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-star mr-1"></i> Avaliações recebidas</h3>
+                </div>
 
-    </ul>
+                <div class="card-body">
+                    {% for avaliacao in profissional.avaliacoes_profissional.all %}
+
+                        <div class="{% if not forloop.last %}border-bottom mb-3 pb-3{% endif %}">
+                            {% include 'partials/estrelas.html' with nota=avaliacao.nota %}
+
+                            <span class="text-muted ml-2">
+                                {{ avaliacao.cliente }} · {{ avaliacao.data_avaliacao|date:'d/m/Y' }}
+                            </span>
+
+                            <p class="mb-0 mt-1">{{ avaliacao.comentario }}</p>
+                        </div>
+
+                    {% empty %}
+                        <p class="text-muted mb-0">Nenhuma avaliação recebida ainda.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            {% if user.id == profissional.id %}
+
+                <!-- Só o próprio profissional vê -->
+                <div class="card card-outline card-info">
+
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-inbox mr-1"></i> Solicitações recebidas</h3>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for servico in profissional.servicos.all %}
+                                {% for solicitacao in servico.solicitacoes.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
+                                            {{ solicitacao.servico.titulo }} · {{ solicitacao.cliente }}
+                                        </a>
+
+                                        {% include 'partials/status_solicitacao.html' %}
+                                    </li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
 {% endblock %}

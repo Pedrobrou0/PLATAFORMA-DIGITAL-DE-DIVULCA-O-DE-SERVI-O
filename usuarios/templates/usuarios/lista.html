@@ -1,57 +1,74 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Profissionais{% endblock %}
 
-{% block title %}
+{% block page_title %}Profissionais{% endblock %}
 
-    Profissionais
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Profissionais</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Profissionais
-   </h2>
-
     {% if not user.is_authenticated %}
 
-        <a href="{% url 'criar_profissional' %}">
-            Cadastre-se como profissional
-        </a>
+        <div class="mb-3">
+            <a href="{% url 'criar_profissional' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus mr-1"></i> Cadastre-se como profissional
+            </a>
+        </div>
 
     {% endif %}
 
-    <ul>
+    <div class="row">
 
         {% for profissional in profissionais %}
 
-            <li>
+            <div class="col-12 col-sm-6 col-lg-4 d-flex align-items-stretch">
 
-                {% if profissional.foto %}
+                <div class="card card-outline card-primary w-100">
 
-                    <img src="{{ profissional.foto.url }}"
-                         alt="Foto de {{ profissional.get_full_name }}"
-                         width="80">
+                    <div class="card-body text-center">
 
-                {% endif %}
+                        {% if profissional.foto %}
+                            <img src="{{ profissional.foto.url }}"
+                                 alt="Foto de {{ profissional }}"
+                                 class="img-circle elevation-2 mb-3"
+                                 style="width: 90px; height: 90px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-5x text-secondary mb-3"></i>
+                        {% endif %}
 
-                {{ profissional }}
+                        <h5 class="mb-1">{{ profissional }}</h5>
 
-                <a href="{% url 'detalhe_profissional' profissional.id %}">
-                    Detalhar
-                </a>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt mr-1"></i>{{ profissional.cidade }}
+                        </p>
 
-            </li>
+                        {% for categoria in profissional.categorias.all %}
+                            <span class="badge badge-light">{{ categoria.nome }}</span>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="card-footer text-center">
+                        <a href="{% url 'detalhe_profissional' profissional.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye mr-1"></i> Ver perfil
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
 
         {% empty %}
 
-            <li>
-                Nenhum profissional cadastrado.
-            </li>
+            <div class="col-12">
+                <div class="alert alert-light">Nenhum profissional cadastrado ainda.</div>
+            </div>
 
         {% endfor %}
 
-    </ul>
+    </div>
 
 {% endblock %}
