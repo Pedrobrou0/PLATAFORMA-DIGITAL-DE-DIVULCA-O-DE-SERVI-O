@@ -1,0 +1,62 @@
+{% load formularios %}
+
+{% comment %}
+    Desenha todos os campos de um formulário no padrão do Bootstrap 4:
+    label, campo com form-control, texto de ajuda e erros.
+    Uso: {% include 'partials/form_campos.html' %} dentro do <form>.
+{% endcomment %}
+
+{% if form.non_field_errors %}
+
+    <div class="alert alert-danger">
+        {% for erro in form.non_field_errors %}
+            <p class="mb-0">{{ erro }}</p>
+        {% endfor %}
+    </div>
+
+{% endif %}
+
+{% for campo in form.hidden_fields %}
+    {{ campo }}
+{% endfor %}
+
+{% for campo in form.visible_fields %}
+
+    {% if campo.field.widget.input_type == 'checkbox' %}
+
+        <div class="form-group form-check">
+            {{ campo|bootstrap }}
+
+            <label class="form-check-label" for="{{ campo.id_for_label }}">
+                {{ campo.label }}
+            </label>
+
+            {% for erro in campo.errors %}
+                <div class="invalid-feedback d-block">{{ erro }}</div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="form-group">
+            <label for="{{ campo.id_for_label }}">
+                {{ campo.label }}
+                {% if campo.field.required %}
+                    <span class="text-danger">*</span>
+                {% endif %}
+            </label>
+
+            {{ campo|bootstrap }}
+
+            {% if campo.help_text %}
+                <small class="form-text text-muted">{{ campo.help_text|safe }}</small>
+            {% endif %}
+
+            {% for erro in campo.errors %}
+                <div class="invalid-feedback d-block">{{ erro }}</div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+
+{% endfor %}
