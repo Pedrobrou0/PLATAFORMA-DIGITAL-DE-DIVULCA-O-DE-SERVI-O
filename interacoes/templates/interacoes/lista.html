@@ -1,51 +1,74 @@
-{% extends 'interacoes/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}{{ titulo }}{% endblock %}
 
-{% block title %}
+{% block page_title %}{{ titulo }}{% endblock %}
 
-    Solicitações
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Solicitações</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        {{ titulo }}
-    </h2>
+    <div class="card">
 
-    {% if perms.interacoes.add_solicitacao %}
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-clipboard-list mr-1"></i>
+                {{ solicitacoes|length }} solicitaç{{ solicitacoes|length|pluralize:"ão,ões" }}
+            </h3>
 
-        <a href="{% url 'lista_servicos' %}">
-            Solicitar um novo serviço
-        </a>
+            {% if perms.interacoes.add_solicitacao %}
+                <div class="card-tools">
+                    <a href="{% url 'lista_servicos' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus mr-1"></i> Solicitar um novo serviço
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
-    {% endif %}
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
 
-    <ul>
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Cliente</th>
+                            <th>Profissional</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
 
-        {% for solicitacao in solicitacoes %}
+                    <tbody>
+                        {% for solicitacao in solicitacoes %}
+                            <tr>
+                                <td>{{ solicitacao.servico.titulo }}</td>
+                                <td>{{ solicitacao.cliente }}</td>
+                                <td>{{ solicitacao.servico.profissional }}</td>
+                                <td class="text-nowrap">{{ solicitacao.data_solicitacao|date:'d/m/Y H:i' }}</td>
+                                <td>{% include 'partials/status_solicitacao.html' %}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'detalhe_solicitacao' solicitacao.id %}" class="btn btn-sm btn-default">
+                                        <i class="fas fa-eye mr-1"></i> Detalhar
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Nenhuma solicitação por aqui.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
 
-            <li>
-                {{ solicitacao.servico.titulo }}
-                —
-                {{ solicitacao.cliente }}
-                —
-                {{ solicitacao.get_status_display }}
+                </table>
+            </div>
+        </div>
 
-                <a href="{% url 'detalhe_solicitacao' solicitacao.id %}">
-                    Detalhar
-                </a>
-            </li>
-
-        {% empty %}
-
-            <li>
-                Nenhuma solicitação cadastrada.
-            </li>
-
-        {% endfor %}
-
-    </ul>
+    </div>
 
 {% endblock %}

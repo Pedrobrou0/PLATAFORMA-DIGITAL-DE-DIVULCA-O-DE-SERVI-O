@@ -1,136 +1,186 @@
-{% extends 'interacoes/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Solicitação {{ solicitacao.id }}{% endblock %}
 
-{% block title %}
+{% block page_title %}Solicitação nº {{ solicitacao.id }}{% endblock %}
 
-    Solicitação
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_solicitacoes' %}">Solicitações</a></li>
+    <li class="breadcrumb-item active">Nº {{ solicitacao.id }}</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Solicitação {{ solicitacao.id }}
-    </h2>
+    <div class="row">
 
-    <p>
-        Cliente:
-        {{ solicitacao.cliente }}
-    </p>
+        <div class="col-lg-8">
 
-     <p>
-        Serviço:
-        {{ solicitacao.servico }}
+            <div class="card card-primary card-outline">
 
-        <a href="{% url 'detalhe_servico' solicitacao.servico.id %}">
-            Ver serviço
-        </a>
-    </p>
+                <div class="card-header">
+                    <h3 class="card-title">{{ solicitacao.servico.titulo }}</h3>
 
-    <p>
-        Profissional:
-        {{ solicitacao.servico.profissional }}
+                    <div class="card-tools">
+                        {% include 'partials/status_solicitacao.html' %}
+                    </div>
+                </div>
 
-        <a href="{% url 'detalhe_profissional' solicitacao.servico.profissional.id %}">
-            Ver profissional
-        </a>
-    </p>
+                <div class="card-body">
 
-    <p>
-        Descrição:
-        {{ solicitacao.descricao }}
-    </p>
+                    <dl class="row mb-0">
 
-    <p>
-        Status:
-        {{ solicitacao.get_status_display }}
-    </p>
+                        <dt class="col-sm-4">Serviço</dt>
+                        <dd class="col-sm-8">
+                            <a href="{% url 'detalhe_servico' solicitacao.servico.id %}">{{ solicitacao.servico }}</a>
+                        </dd>
 
-    {% if solicitacao.status == 'PENDENTE' %}
+                        <dt class="col-sm-4">Profissional</dt>
+                        <dd class="col-sm-8">
+                            <a href="{% url 'detalhe_profissional' solicitacao.servico.profissional.id %}">{{ solicitacao.servico.profissional }}</a>
+                        </dd>
 
-        {% if eh_profissional_dono %}
+                        <dt class="col-sm-4">Cliente</dt>
+                        <dd class="col-sm-8">{{ solicitacao.cliente }}</dd>
 
-            <form method="post" action="{% url 'aceitar_solicitacao' solicitacao.id %}">
-                {% csrf_token %}
-                <button type="submit">Aceitar</button>
-            </form>
+                        <dt class="col-sm-4">Pedido em</dt>
+                        <dd class="col-sm-8">{{ solicitacao.data_solicitacao|date:'d/m/Y H:i' }}</dd>
 
-            <form method="post" action="{% url 'recusar_solicitacao' solicitacao.id %}">
-                {% csrf_token %}
-                <button type="submit">Recusar</button>
-            </form>
+                        <dt class="col-sm-4">Última atualização</dt>
+                        <dd class="col-sm-8">{{ solicitacao.data_atualizacao|date:'d/m/Y H:i' }}</dd>
 
-        {% endif %}
+                        <dt class="col-sm-4">Descrição</dt>
+                        <dd class="col-sm-8">{{ solicitacao.descricao|linebreaksbr }}</dd>
 
-        {% if eh_cliente_dono %}
+                    </dl>
 
-            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
-                {% csrf_token %}
-                <button type="submit">Cancelar</button>
-            </form>
+                </div>
 
-        {% endif %}
+                <div class="card-footer">
+                    <a href="{% url 'lista_solicitacoes' %}" class="btn btn-default">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar
+                    </a>
 
-    {% elif solicitacao.status == 'ACEITA' %}
+                    {% if eh_cliente_dono and solicitacao.status == 'PENDENTE' %}
+                        <a href="{% url 'editar_solicitacao' solicitacao.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit mr-1"></i> Editar
+                        </a>
+                    {% endif %}
 
-        {% if eh_profissional_dono %}
+                    {% if perms.interacoes.delete_solicitacao %}
+                        <a href="{% url 'deletar_solicitacao' solicitacao.id %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt mr-1"></i> Excluir
+                        </a>
+                    {% endif %}
+                </div>
 
-            <form method="post" action="{% url 'concluir_solicitacao' solicitacao.id %}">
-                {% csrf_token %}
-                <button type="submit">Concluir</button>
-            </form>
+            </div>
 
-        {% endif %}
+        </div>
 
-        {% if eh_cliente_dono %}
+        <!-- Ações conforme o papel de quem está vendo -->
+        <div class="col-lg-4">
 
-            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
-                {% csrf_token %}
-                <button type="submit">Cancelar</button>
-            </form>
+            <div class="card">
 
-       {% endif %}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-tasks mr-1"></i> Ações</h3>
+                </div>
 
-    {% elif solicitacao.status == 'CONCLUIDA' %}
+                <div class="card-body">
 
-        {% if eh_cliente_dono %}
+                    {% if solicitacao.status == 'PENDENTE' %}
 
-            <a href="{% url 'criar_avaliacao' %}?profissional={{ solicitacao.servico.profissional.id }}">
-                Avaliar profissional
-            </a>
+                        {% if eh_profissional_dono %}
 
-        {% elif eh_profissional_dono %}
+                            <form method="post" action="{% url 'aceitar_solicitacao' solicitacao.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-check mr-1"></i> Aceitar
+                                </button>
+                            </form>
 
-            <a href="{% url 'criar_avaliacao' %}?cliente={{ solicitacao.cliente.id }}">
-                Avaliar cliente
-            </a>
+                            <form method="post" action="{% url 'recusar_solicitacao' solicitacao.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-block">
+                                    <i class="fas fa-times mr-1"></i> Recusar
+                                </button>
+                            </form>
 
-        {% endif %}
+                        {% endif %}
 
-    {% endif %}
+                        {% if eh_cliente_dono %}
 
-    <p>
-        Data:
-        {{ solicitacao.data_solicitacao }}
-    </p>
+                            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary btn-block">
+                                    <i class="fas fa-ban mr-1"></i> Cancelar solicitação
+                                </button>
+                            </form>
 
-    {% if eh_cliente_dono and solicitacao.status == 'PENDENTE' %}
+                        {% endif %}
 
-        <a href="{% url 'editar_solicitacao' solicitacao.id %}">
-            Editar
-        </a>
+                    {% elif solicitacao.status == 'ACEITA' %}
 
-    {% endif %}
+                        {% if eh_profissional_dono %}
 
-    {% if perms.interacoes.delete_solicitacao %}
+                            <form method="post" action="{% url 'concluir_solicitacao' solicitacao.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-flag-checkered mr-1"></i> Concluir
+                                </button>
+                            </form>
 
-        |
+                        {% endif %}
 
-        <a href="{% url 'deletar_solicitacao' solicitacao.id %}">
-            Excluir
-        </a>
+                        {% if eh_cliente_dono %}
 
-    {% endif %}
+                            <form method="post" action="{% url 'cancelar_solicitacao' solicitacao.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary btn-block">
+                                    <i class="fas fa-ban mr-1"></i> Cancelar solicitação
+                                </button>
+                            </form>
+
+                        {% endif %}
+
+                    {% elif solicitacao.status == 'CONCLUIDA' %}
+
+                        {% if eh_cliente_dono %}
+
+                            <a href="{% url 'criar_avaliacao' %}?profissional={{ solicitacao.servico.profissional.id }}" class="btn btn-warning btn-block">
+                                <i class="fas fa-star mr-1"></i> Avaliar profissional
+                            </a>
+
+                        {% elif eh_profissional_dono %}
+
+                            <a href="{% url 'criar_avaliacao' %}?cliente={{ solicitacao.cliente.id }}" class="btn btn-warning btn-block">
+                                <i class="fas fa-star mr-1"></i> Avaliar cliente
+                            </a>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                    <p class="text-muted small mb-0 mt-2">
+                        {% if solicitacao.status == 'PENDENTE' %}
+                            Aguardando a resposta do profissional.
+                        {% elif solicitacao.status == 'ACEITA' %}
+                            O profissional aceitou. Combine os detalhes pelo contato do perfil.
+                        {% elif solicitacao.status == 'CONCLUIDA' %}
+                            Serviço concluído.
+                        {% elif solicitacao.status == 'RECUSADA' %}
+                            O profissional recusou esta solicitação.
+                        {% else %}
+                            Esta solicitação foi cancelada.
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
