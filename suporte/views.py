@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
@@ -55,6 +56,8 @@ def criar_feedback(request):
         feedback.usuario = request.user
         feedback.enviar()
 
+        messages.success(request, 'Feedback enviado. Obrigado por ajudar a melhorar a plataforma!')
+
         return redirect('detalhe_feedback', id=feedback.id)
 
     return render(request, 'suporte/feedback_form.html', {
@@ -75,6 +78,8 @@ def editar_feedback(request, id):
     if form.is_valid():
         feedback.alterar_status(form.cleaned_data['status'])
 
+        messages.success(request, 'Status do feedback alterado.')
+
         return redirect('detalhe_feedback', id=feedback.id)
 
     return render(request, 'suporte/feedback_form.html', {
@@ -89,6 +94,8 @@ def deletar_feedback(request, id):
 
     if request.method == 'POST':
         feedback.delete()
+
+        messages.success(request, 'Feedback excluído.')
 
         return redirect('lista_feedbacks')
 
@@ -142,6 +149,8 @@ def criar_avaliacao(request):
 
         avaliacao.avaliar()
 
+        messages.success(request, 'Avaliação registrada. Obrigado!')
+
         return redirect('detalhe_avaliacao', id=avaliacao.id)
 
     return render(request, 'suporte/avaliacao_form.html', {
@@ -171,6 +180,8 @@ def editar_avaliacao(request, id):
     if form.is_valid():
         form.save()
 
+        messages.success(request, 'Avaliação atualizada.')
+
         return redirect('detalhe_avaliacao', id=avaliacao.id)
 
     return render(request, 'suporte/avaliacao_form.html', {
@@ -188,6 +199,8 @@ def deletar_avaliacao(request, id):
 
     if request.method == 'POST':
         avaliacao.delete()
+
+        messages.success(request, 'Avaliação excluída.')
 
         return redirect('lista_avaliacoes')
 
