@@ -1,25 +1,55 @@
-{% extends 'suporte/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Avaliação
+{% block title %}Avaliação{% endblock %}
+
+{% block page_title %}Avaliar{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_avaliacoes' %}">Avaliações</a></li>
+    <li class="breadcrumb-item active">Formulário</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        Avaliação
-    </h2>
+    <div class="row">
 
-    <form method="post">
+        <div class="col-lg-6">
 
-        {% csrf_token %}
+            <div class="card card-warning card-outline">
 
-        {{ form.as_p }}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-star mr-1"></i> Sua avaliação</h3>
+                </div>
 
-        <button type="submit">
-            Salvar
-        </button>
+                <form method="post">
 
-    </form>
+                    {% csrf_token %}
+
+                    <div class="card-body">
+
+                        <p class="text-muted">
+                            Dê uma nota de 1 a 5 e conte como foi o serviço.
+                            Só aparecem aqui as pessoas com quem você já concluiu um serviço.
+                        </p>
+
+                        {% include 'partials/form_campos.html' %}
+
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'lista_avaliacoes' %}" class="btn btn-default">Cancelar</a>
+
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-star mr-1"></i> Salvar avaliação
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
