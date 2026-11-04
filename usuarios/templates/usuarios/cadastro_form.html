@@ -1,40 +1,28 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base_acesso.html' %}
 
+{% block title %}{{ titulo }}{% endblock %}
 
-{% block title %}
-
-    {{ titulo }}
-
-{% endblock %}
-
+{% block largura %}560px{% endblock %}
 
 {% block content %}
 
-    <h2>
-        {{ titulo }}
-    </h2>
+    <p class="login-box-msg">{{ titulo }}</p>
 
-    <form
-        method="post"
-        enctype="multipart/form-data"
-    >
+    <form method="post" enctype="multipart/form-data">
 
         {% csrf_token %}
 
-        {{ form.as_p }}
+        {% include 'partials/form_campos.html' %}
 
-        <button type="submit">
-            Cadastrar
+        <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-user-plus mr-1"></i> Cadastrar
         </button>
 
     </form>
 
-    <p>
+    <p class="mb-0 mt-3 text-center">
         Já tem conta?
-
-        <a href="{% url 'login' %}">
-            Entrar
-        </a>
+        <a href="{% url 'login' %}">Entrar</a>
     </p>
 
 {% endblock %}
