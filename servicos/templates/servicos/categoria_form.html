@@ -1,29 +1,48 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Categoria{% endblock %}
 
-{% block title %}
+{% block page_title %}Categoria{% endblock %}
 
-    Categoria
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_categorias' %}">Categorias</a></li>
+    <li class="breadcrumb-item active">Formulário</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Categoria
-    </h2>
+    <div class="row">
 
-    <form method="post">
+        <div class="col-lg-6">
 
-        {% csrf_token %}
+            <div class="card card-warning card-outline">
 
-        {{ form.as_p }}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-tag mr-1"></i> Dados da categoria</h3>
+                </div>
 
-        <button type="submit">
-            Salvar
-        </button>
+                <form method="post">
 
-    </form>
+                    {% csrf_token %}
+
+                    <div class="card-body">
+                        {% include 'partials/form_campos.html' %}
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'lista_categorias' %}" class="btn btn-default">Cancelar</a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-1"></i> Salvar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}

@@ -1,46 +1,52 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Categorias{% endblock %}
 
-{% block title %}
+{% block page_title %}Categorias{% endblock %}
 
-    Categorias
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Categorias</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Categorias
-    </h2>
-
     {% if perms.servicos.add_categoria %}
-
-        <a href="{% url 'criar_categoria' %}">
-            Nova categoria
-        </a>
-
+        <div class="mb-3">
+            <a href="{% url 'criar_categoria' %}" class="btn btn-primary">
+                <i class="fas fa-plus mr-1"></i> Nova categoria
+            </a>
+        </div>
     {% endif %}
 
-    <ul>
+    <div class="row">
 
         {% for categoria in categorias %}
 
-            <li>
-                {{ categoria.nome }}
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{% url 'detalhe_categoria' categoria.id %}" class="info-box text-dark">
 
-                <a href="{% url 'detalhe_categoria' categoria.id %}">
-                Detalhar
+                    <span class="info-box-icon bg-warning elevation-1">
+                        <i class="fas fa-tag"></i>
+                    </span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">{{ categoria.nome }}</span>
+                        <span class="info-box-number font-weight-normal text-muted small">
+                            {{ categoria.servicos.count }} serviço{{ categoria.servicos.count|pluralize }}
+                        </span>
+                    </div>
+
                 </a>
-            </li>
+            </div>
+
         {% empty %}
 
-            <li>
-                Nenhuma categoria cadastrada.
-            </li>
+            <div class="col-12">
+                <div class="alert alert-light">Nenhuma categoria cadastrada.</div>
+            </div>
 
         {% endfor %}
 
-    </ul>
+    </div>
 
 {% endblock %}
