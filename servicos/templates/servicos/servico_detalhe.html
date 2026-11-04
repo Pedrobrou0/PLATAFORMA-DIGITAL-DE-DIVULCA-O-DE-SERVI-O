@@ -1,95 +1,126 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Serviço
+{% block title %}{{ servico.titulo }}{% endblock %}
+
+{% block page_title %}{{ servico.titulo }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_servicos' %}">Serviços</a></li>
+    <li class="breadcrumb-item active">{{ servico.titulo }}</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        {{ servico.titulo }}
-    </h2>
+    <div class="row">
 
-    <p>
-        Profissional:
-        {{ servico.profissional }}
-    </p>
+        <div class="col-lg-8">
 
-    {% if servico.profissional.foto %}
+            <div class="card card-primary card-outline">
 
-        <img src="{{ servico.profissional.foto.url }}"
-             alt="Foto de {{ servico.profissional.get_full_name }}"
-             width="120">
+                {% if servico.imagem %}
+                    <img src="{{ servico.imagem.url }}" alt="{{ servico.titulo }}" class="card-img-top" style="max-height: 320px; object-fit: cover;">
+                {% endif %}
 
-    {% endif %}
+                <div class="card-body">
 
-    <p>
-        <a href="{% url 'detalhe_profissional' servico.profissional.id %}">
-            Detalhar profissional
-        </a>
-    </p>
+                    <p>
+                        <a href="{% url 'detalhe_categoria' servico.categoria.id %}" class="badge badge-warning">{{ servico.categoria }}</a>
 
-    <p>
-        Categoria:
-        {{ servico.categoria }}
+                        {% if servico.ativo %}
+                            <span class="badge badge-success">Ativo</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Inativo</span>
+                        {% endif %}
+                    </p>
 
-        <a href="{% url 'detalhe_categoria' servico.categoria.id %}">
-            Ver categoria
-        </a>
-    </p>
+                    <h3 class="text-primary">R$ {{ servico.preco }}</h3>
 
-    <p>
-        Descrição:
-        {{ servico.descricao }}
-    </p>
+                    <p>{{ servico.descricao|linebreaksbr }}</p>
 
-    <p>
-        Preço:
-        R$ {{ servico.preco }}
-    </p>
+                    <p class="text-muted small mb-0">
+                        Publicado em {{ servico.data_cadastro|date:'d/m/Y' }}
+                    </p>
 
-    <p>
-        Data:
-        {{ servico.data_cadastro }}
-    </p>
+                </div>
 
-    <p>
-        Status:
-        {% if servico.ativo %}Ativo{% else %}Inativo{% endif %}
-   </p>
+                <div class="card-footer">
 
-    {% if pode_gerenciar %}
+                    <a href="{% url 'lista_servicos' %}" class="btn btn-default">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar
+                    </a>
 
-        <form method="post" action="{% if servico.ativo %}{% url 'desativar_servico' servico.id %}{% else %}{% url 'ativar_servico' servico.id %}{% endif %}">
+                    {% if pode_gerenciar %}
 
-            {% csrf_token %}
+                        <a href="{% url 'editar_servico' servico.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit mr-1"></i> Editar
+                        </a>
 
-            <button type="submit">
-                {% if servico.ativo %}Desativar{% else %}Ativar{% endif %}
-            </button>
+                        <form method="post" class="d-inline" action="{% if servico.ativo %}{% url 'desativar_servico' servico.id %}{% else %}{% url 'ativar_servico' servico.id %}{% endif %}">
+                            {% csrf_token %}
 
-        </form>
+                            <button type="submit" class="btn {% if servico.ativo %}btn-secondary{% else %}btn-success{% endif %}">
+                                {% if servico.ativo %}
+                                    <i class="fas fa-pause mr-1"></i> Desativar
+                                {% else %}
+                                    <i class="fas fa-play mr-1"></i> Ativar
+                                {% endif %}
+                            </button>
+                        </form>
 
-        <a href="{% url 'editar_servico' servico.id %}">
-            Editar
-        </a>
+                        <a href="{% url 'deletar_servico' servico.id %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt mr-1"></i> Excluir
+                        </a>
 
-        |
+                    {% elif servico.ativo %}
 
-        <a href="{% url 'deletar_servico' servico.id %}">
-            Excluir
-        </a>
+                        {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
+                            <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}" class="btn btn-primary">
+                                <i class="fas fa-paper-plane mr-1"></i> Solicitar serviço
+                            </a>
+                        {% endif %}
 
-    {% elif servico.ativo %}
+                    {% endif %}
 
-        {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
+                </div>
 
-            <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}">
-                Solicitar serviço
-            </a>
+            </div>
 
-        {% endif %}
+        </div>
 
-    {% endif %}
+        <!-- Quem presta o serviço (Visualizar Perfil e Contato do Profissional) -->
+        <div class="col-lg-4">
+
+            <div class="card card-outline card-success">
+
+                <div class="card-body box-profile">
+
+                    <div class="text-center">
+                        {% if servico.profissional.foto %}
+                            <img src="{{ servico.profissional.foto.url }}"
+                                 alt="Foto de {{ servico.profissional }}"
+                                 class="profile-user-img img-fluid img-circle"
+                                 style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="profile-username text-center">{{ servico.profissional }}</h3>
+
+                    <p class="text-muted text-center">
+                        <i class="fas fa-map-marker-alt mr-1"></i>{{ servico.profissional.cidade }}
+                    </p>
+
+                    <a href="{% url 'detalhe_profissional' servico.profissional.id %}" class="btn btn-outline-success btn-block">
+                        <i class="fas fa-user-tie mr-1"></i> Ver perfil e contato
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}

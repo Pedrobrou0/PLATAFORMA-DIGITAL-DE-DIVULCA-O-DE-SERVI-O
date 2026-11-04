@@ -1,66 +1,115 @@
-{% extends 'servicos/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Serviços{% endblock %}
 
-{% block title %}
+{% block page_title %}Serviços{% endblock %}
 
-    Serviços
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Serviços</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Serviços
-   </h2>
+    <!-- Busca por palavra-chave (RF015) e por categoria (RF014) -->
+    <div class="card card-outline card-primary">
+        <div class="card-body">
 
-    {% if user.profissional %}
+            <form method="get" class="form-row align-items-end">
 
-        <a href="{% url 'criar_servico' %}">
-            Novo serviço
-        </a>
+                <div class="col-md-6 mb-2">
+                    <label for="busca-q">Buscar</label>
+                    <input type="search" id="busca-q" name="q" value="{{ termo|default:'' }}" class="form-control" placeholder="Ex.: eletricista, aula de violão">
+                </div>
 
-    {% endif %}
+                <div class="col-md-4 mb-2">
+                    <label for="busca-categoria">Categoria</label>
+                    <select id="busca-categoria" name="categoria" class="form-control">
+                        <option value="">Todas as categorias</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}" {% if categoria_selecionada == categoria.id|stringformat:"s" %}selected{% endif %}>
+                                {{ categoria.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <form method="get">
+                <div class="col-md-2 mb-2">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search mr-1"></i> Filtrar
+                    </button>
+                </div>
 
-            <input type="text" name="q" value="{{ termo|default:'' }}" placeholder="Buscar por título">
+            </form>
 
-            <select name="categoria">
-            <option value="">Todas as categorias</option>
-            {% for categoria in categorias %}
-                <option value="{{ categoria.id }}" {% if categoria_selecionada == categoria.id|stringformat:"s" %}selected{% endif %}>
-                    {{ categoria.nome }}
-                </option>
-            {% endfor %}
-            </select>
+        </div>
+    </div>
 
-        <button type="submit">
-            Filtrar
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted">
+            {{ servicos|length }} serviço{{ servicos|length|pluralize }} encontrado{{ servicos|length|pluralize }}
+        </span>
 
-    </form>
+        {% if user.profissional %}
+            <a href="{% url 'criar_servico' %}" class="btn btn-success">
+                <i class="fas fa-plus mr-1"></i> Novo serviço
+            </a>
+        {% endif %}
+    </div>
 
-    <ul>
+    <div class="row">
 
         {% for servico in servicos %}
 
-            <li>
-                {{ servico.titulo }}
+            <div class="col-12 col-md-6 col-lg-4 d-flex align-items-stretch">
 
-                <a href="{% url 'detalhe_servico' servico.id %}">
-                    Detalhar
-                </a>
-            </li>
+                <div class="card w-100">
+
+                    {% if servico.imagem %}
+                        <img src="{{ servico.imagem.url }}" alt="{{ servico.titulo }}" class="card-img-top" style="height: 170px; object-fit: cover;">
+                    {% endif %}
+
+                    <div class="card-body d-flex flex-column">
+
+                        <span class="badge badge-warning align-self-start mb-2">{{ servico.categoria }}</span>
+
+                        <h5 class="card-title mb-1">{{ servico.titulo }}</h5>
+
+                        <p class="text-muted small mb-2">
+                            <i class="fas fa-user-tie mr-1"></i>{{ servico.profissional }}
+                        </p>
+
+                        <p class="card-text">{{ servico.descricao|truncatechars:110 }}</p>
+
+                        <h5 class="text-primary mt-auto mb-0">R$ {{ servico.preco }}</h5>
+
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'detalhe_servico' servico.id %}" class="btn btn-sm btn-default">
+                            <i class="fas fa-eye mr-1"></i> Detalhar
+                        </a>
+
+                        {% if not user.is_authenticated or perms.interacoes.add_solicitacao %}
+                            <a href="{% url 'criar_solicitacao' %}?servico={{ servico.id }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-paper-plane mr-1"></i> Solicitar
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
 
         {% empty %}
 
-            <li>
-                Nenhum serviço cadastrado.
-            </li>
+            <div class="col-12">
+                <div class="alert alert-light">
+                    Nenhum serviço encontrado. Tente outra palavra ou outra categoria.
+                </div>
+            </div>
 
         {% endfor %}
 
-    </ul>
+    </div>
 
 {% endblock %}
