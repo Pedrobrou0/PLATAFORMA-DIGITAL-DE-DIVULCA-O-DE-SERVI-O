@@ -31,7 +31,7 @@ urlpatterns = [
     path(
         'profissionais/<int:id>/deletar/',
         views.deletar_profissional,
-       name='deletar_profissional'
+        name='deletar_profissional'
     ),
     path(
         'entrar/',
@@ -41,7 +41,7 @@ urlpatterns = [
     path(
         'sair/',
         views.sair,
-               name='logout'
+        name='logout'
     ),
     path(
         'cadastro/',
@@ -56,7 +56,7 @@ urlpatterns = [
     path(
         'conta/senha/',
         views.alterar_senha,
-                name='alterar_senha'
+        name='alterar_senha'
     ),
     path(
         'senha/redefinir/',
