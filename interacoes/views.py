@@ -18,6 +18,7 @@ def verificar_profissional_dono(request, solicitacao):
 
 
 @login_required
+@permission_required('interacoes.view_solicitacao', raise_exception=True)
 def lista_solicitacoes(request):
     if eh_administrador(request.user):
         solicitacoes = Solicitacao.objects.all()
@@ -44,6 +45,7 @@ def lista_solicitacoes(request):
 
 
 @login_required
+@permission_required('interacoes.view_solicitacao', raise_exception=True)
 def detalhe_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
@@ -95,6 +97,7 @@ def criar_solicitacao(request):
 
 
 @login_required
+@permission_required('interacoes.add_solicitacao', raise_exception=True)
 def editar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 
@@ -171,6 +174,7 @@ def recusar_solicitacao(request, id):
 
 
 @login_required
+@permission_required('interacoes.add_solicitacao', raise_exception=True)
 def cancelar_solicitacao(request, id):
     solicitacao = Solicitacao.objects.get(id=id)
 

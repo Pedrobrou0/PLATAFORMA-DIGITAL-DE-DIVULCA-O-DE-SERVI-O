@@ -8,6 +8,8 @@ from .forms import CategoriaForm, ServicoForm
 from usuarios.permissoes import eh_profissional, pode_gerenciar
 
 
+@login_required
+@permission_required('servicos.view_categoria', raise_exception=True)
 def lista_categorias(request):
     categorias = Categoria.objects.all()
 
@@ -79,6 +81,8 @@ def editar_categoria(request, id):
     })
 
 
+@login_required
+@permission_required('servicos.view_categoria', raise_exception=True)
 def detalhe_categoria(request, id):
     categoria = Categoria.objects.get(id=id)
 
@@ -95,6 +99,8 @@ def detalhe_categoria(request, id):
         'servicos': servicos
     })
 
+@login_required
+@permission_required('servicos.view_servico', raise_exception=True)
 def lista_servicos(request):
     categoria_id = request.GET.get('categoria')
     termo = request.GET.get('q')
@@ -117,6 +123,8 @@ def lista_servicos(request):
     })
 
 
+@login_required
+@permission_required('servicos.view_servico', raise_exception=True)
 def detalhe_servico(request, id):
     servico = Servico.objects.get(id=id)
 
@@ -240,6 +248,7 @@ def desativar_servico(request, id):
 
 
 @login_required
+@permission_required('servicos.add_servico', raise_exception=True)
 def meus_servicos(request):
     # Painel do profissional: mostra também os serviços inativos.
     if not eh_profissional(request.user):

@@ -104,6 +104,8 @@ def deletar_feedback(request, id):
         'lista_url': 'lista_feedbacks'
     })
 
+@login_required
+@permission_required('suporte.view_avaliacao', raise_exception=True)
 def lista_avaliacoes(request):
     avaliacoes = Avaliacao.objects.all()
 
@@ -112,6 +114,8 @@ def lista_avaliacoes(request):
     })
 
 
+@login_required
+@permission_required('suporte.view_avaliacao', raise_exception=True)
 def detalhe_avaliacao(request, id):
     avaliacao = Avaliacao.objects.get(id=id)
 

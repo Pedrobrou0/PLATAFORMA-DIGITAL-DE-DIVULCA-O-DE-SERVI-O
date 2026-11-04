@@ -38,6 +38,7 @@ from interacoes.models import Solicitacao, StatusSolicitacao
 from servicos.models import Categoria, Servico
 from suporte.models import Feedback, StatusFeedback, TipoAutorAvaliacao
 
+
 @login_required
 def home(request):
     # Página inicial com destaques (RF018) no formato de dashboard.

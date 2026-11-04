@@ -24,6 +24,7 @@ PERMISSOES_POR_GRUPO = {
 
         # Solicitar Serviço / Acompanhar Solicitações
         'interacoes.add_solicitacao',
+        'interacoes.view_solicitacao',
 
         # Avaliar Usuário
         'suporte.add_avaliacao',
