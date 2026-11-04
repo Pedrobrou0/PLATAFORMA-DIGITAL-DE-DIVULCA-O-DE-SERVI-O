@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 import os
 
+from django.contrib.messages import constants as mensagens
 from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,9 +71,10 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
+
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -130,8 +133,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Pasta static/ na raiz do projeto, com os arquivos do AdminLTE 3
+# (Bootstrap 4, Font Awesome, jQuery). Os templates usam {% static %}.
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 
 # Email
+
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 MAILERS = {
@@ -150,3 +160,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# Mensagens (django.contrib.messages) com as cores do Bootstrap:
+# messages.error vira a classe alert-danger.
+MESSAGE_TAGS = {
+    mensagens.ERROR: 'danger',
+}
