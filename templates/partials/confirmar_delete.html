@@ -1,0 +1,65 @@
+{% comment %}
+    Card de confirmação de exclusão, usado pelos confirmar_delete.html
+    de todos os apps. Recebe pelo contexto: objeto, lista_url e erro.
+{% endcomment %}
+
+<div class="row">
+
+    <div class="col-lg-6">
+
+        <div class="card card-danger card-outline">
+
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-trash-alt mr-1"></i>
+                    Confirmar exclusão
+                </h3>
+            </div>
+
+            <div class="card-body">
+
+                {% if erro %}
+
+                    <div class="alert alert-danger">
+                        <i class="icon fas fa-ban"></i>
+                        {{ erro }}
+                    </div>
+
+                {% else %}
+
+                    <p class="mb-0">
+                        Tem certeza que deseja excluir
+                        <strong>"{{ objeto }}"</strong>?
+                        Esta ação não pode ser desfeita.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-between">
+
+                <a href="{% url lista_url %}" class="btn btn-default">
+                    Voltar
+                </a>
+
+                {% if not erro %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt mr-1"></i>
+                            Sim, excluir
+                        </button>
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

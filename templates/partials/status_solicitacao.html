@@ -1,0 +1,16 @@
+{% comment %}
+    Selo colorido com o status da solicitação.
+    Uso: {% include 'partials/status_solicitacao.html' %} com a variável solicitacao no contexto.
+{% endcomment %}
+
+{% if solicitacao.status == 'PENDENTE' %}
+    <span class="badge badge-warning">{{ solicitacao.get_status_display }}</span>
+{% elif solicitacao.status == 'ACEITA' %}
+    <span class="badge badge-info">{{ solicitacao.get_status_display }}</span>
+{% elif solicitacao.status == 'RECUSADA' %}
+    <span class="badge badge-danger">{{ solicitacao.get_status_display }}</span>
+{% elif solicitacao.status == 'CONCLUIDA' %}
+    <span class="badge badge-success">{{ solicitacao.get_status_display }}</span>
+{% else %}
+    <span class="badge badge-secondary">{{ solicitacao.get_status_display }}</span>
+{% endif %}

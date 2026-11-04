@@ -1,0 +1,14 @@
+{% comment %}
+    Mostra a nota (1 a 5) em estrelas.
+    Uso: {% include 'partials/estrelas.html' with nota=avaliacao.nota %}
+{% endcomment %}
+
+<span class="text-warning text-nowrap" title="Nota {{ nota }} de 5">
+    {% for i in '12345' %}
+        {% if forloop.counter <= nota %}
+            <i class="fas fa-star"></i>
+        {% else %}
+            <i class="far fa-star"></i>
+        {% endif %}
+    {% endfor %}
+</span>
