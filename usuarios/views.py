@@ -12,9 +12,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
-from django.db.models import Count, ProtectedError, Q
+from django.db.models import Avg, Count, ProtectedError, Q
 from django.utils.http import (
     url_has_allowed_host_and_scheme,
+
     urlsafe_base64_decode,
 )
 from .models import Perfil, Profissional
@@ -35,7 +36,7 @@ from .permissoes import (
 )
 from interacoes.models import Solicitacao, StatusSolicitacao
 from servicos.models import Categoria, Servico
-from suporte.models import Feedback, StatusFeedback
+from suporte.models import Feedback, StatusFeedback, TipoAutorAvaliacao
 
 
 def home(request):
@@ -96,9 +97,18 @@ def lista_profissionais(request):
 def detalhe_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
 
+    # Só as avaliações que os clientes fizeram sobre o profissional.
+    avaliacoes = profissional.avaliacoes_profissional.filter(
+        tipo_autor=TipoAutorAvaliacao.CLIENTE
+    ).order_by('-data_avaliacao')
+
     return render(request, 'usuarios/detalhe.html', {
-        'profissional': profissional
+        'profissional': profissional,
+        'perfil': Perfil.do_usuario(profissional),
+        'avaliacoes': avaliacoes,
+        'media_notas': avaliacoes.aggregate(media=Avg('nota'))['media']
     })
+
 
 
 def criar_profissional(request):

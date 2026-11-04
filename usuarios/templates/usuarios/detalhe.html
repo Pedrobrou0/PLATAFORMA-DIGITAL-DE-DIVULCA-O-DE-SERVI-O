@@ -13,31 +13,77 @@
 
 {% block content %}
 
+    <!-- Capa do perfil: banner, foto e cor escolhidos pelo profissional -->
+    <div class="card card-widget widget-user shadow">
+
+        {% include 'partials/banner_perfil.html' with perfil=perfil nome=profissional descricao=perfil.bio|default:profissional.cidade %}
+
+        <div class="card-footer" style="padding-top: 60px;">
+
+            <div class="row">
+
+                <div class="col-sm-3 col-6 border-right">
+                    <div class="description-block">
+                        <h5 class="description-header">{{ profissional.servicos.count }}</h5>
+                        <span class="description-text">SERVIÇOS</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-6 border-right">
+                    <div class="description-block">
+                        <h5 class="description-header">{{ avaliacoes|length }}</h5>
+                        <span class="description-text">AVALIAÇÕES</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-6 border-right">
+                    <div class="description-block">
+                        <h5 class="description-header">
+                            {% if media_notas %}
+                                <i class="fas fa-star text-warning"></i> {{ media_notas|floatformat:1 }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </h5>
+                        <span class="description-text">NOTA MÉDIA</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-6">
+                    <div class="description-block">
+                        <h5 class="description-header">
+                            {% if perfil.instagram %}
+                                <a href="https://instagram.com/{{ perfil.instagram }}" target="_blank" rel="noopener">
+                                    @{{ perfil.instagram }}
+                                </a>
+                            {% else %}
+                                <i class="fas fa-map-marker-alt mr-1"></i>{{ profissional.cidade }}
+                            {% endif %}
+                        </h5>
+                        <span class="description-text">
+                            {% if perfil.instagram %}INSTAGRAM{% else %}CIDADE{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
     <div class="row">
 
-        <!-- Coluna do perfil e contato (RF016 e RF017) -->
+        <!-- Coluna do contato (RF016 e RF017) -->
         <div class="col-md-4">
 
             <div class="card card-primary card-outline">
 
-                <div class="card-body box-profile">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-address-card mr-1"></i> Contato</h3>
+                </div>
 
-                    <div class="text-center">
-                        {% if profissional.foto %}
-                            <img src="{{ profissional.foto.url }}"
-                                 alt="Foto de {{ profissional }}"
-                                 class="profile-user-img img-fluid img-circle"
-                                 style="width: 110px; height: 110px; object-fit: cover;">
-                        {% else %}
-                            <i class="fas fa-user-circle fa-6x text-secondary"></i>
-                        {% endif %}
-                    </div>
-
-                    <h3 class="profile-username text-center">{{ profissional }}</h3>
-
-                    <p class="text-muted text-center">
-                        <i class="fas fa-map-marker-alt mr-1"></i>{{ profissional.cidade }}
-                    </p>
+                <div class="card-body">
 
                     <ul class="list-group list-group-unbordered mb-3">
 
@@ -172,7 +218,7 @@
                 </div>
 
                 <div class="card-body">
-                    {% for avaliacao in profissional.avaliacoes_profissional.all %}
+                    {% for avaliacao in avaliacoes %}
 
                         <div class="{% if not forloop.last %}border-bottom mb-3 pb-3{% endif %}">
                             {% include 'partials/estrelas.html' with nota=avaliacao.nota %}

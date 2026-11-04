@@ -25,6 +25,7 @@ O projeto está sendo desenvolvido como atividade acadêmica da disciplina de Pr
 - [Fluxo de trabalho com Git](#fluxo-de-trabalho-com-git)
 - [Autenticação e permissões](#autenticação-e-permissões)
 - [Interface (front-end)](#interface-front-end)
+- [Personalização do perfil](#personalização-do-perfil)
 - [Documentação técnica](#documentação-técnica)
 - [Equipe](#equipe)
 - [Licença](#licença)
@@ -622,7 +623,28 @@ usuarios/templatetags/formularios.py   # filtro que aplica as classes do Bootstr
 - **Mensagens:** as views usam `django.contrib.messages` (`messages.success`, `messages.info` etc.) e o `base.html` mostra cada mensagem como alerta do Bootstrap.
 - **Formulários:** o template `partials/form_campos.html` desenha cada campo com label, ajuda e erros, usando o filtro `{{ campo|bootstrap }}`.
 
+## Personalização do perfil
+
+Todo usuário (cliente, profissional ou administrador) pode personalizar o próprio perfil em **Minha conta → Personalizar perfil** (rota `/conta/perfil/`):
+
+| Campo | Para que serve |
+|---|---|
+| Foto de perfil | Aparece no topo do site, no menu lateral e na capa do perfil |
+| Imagem de capa (banner) | Fundo do topo do perfil, no estilo `widget-user` do AdminLTE |
+| Cor do perfil | Cor do topo quando não há banner e do círculo quando não há foto |
+| Frase de apresentação | Até 160 caracteres, embaixo do nome |
+| Instagram | Link para o perfil no Instagram |
+
+Como funciona:
+
+- **Model `Perfil`** (`usuarios/models.py`): ligado ao `User` do `django.contrib.auth` por `OneToOneField`. É criado sozinho na primeira vez que o usuário entra, pelo método `Perfil.do_usuario()`.
+- **Imagens:** só JPG ou PNG (`FileExtensionValidator`) e no máximo 5 MB (validação no `PerfilForm`), como pede o RF011. Os arquivos vão para `media/perfis/`.
+- **Por contexto:** o context processor `usuarios.context_processors.perfil` deixa `{{ meu_perfil }}` disponível em todos os templates, e é assim que a foto aparece no topo e no menu de qualquer página.
+- **Prévia ao vivo:** na tela de personalização, a capa muda na hora em que o usuário escolhe a imagem, a cor ou escreve a frase, antes de salvar.
+- **Perfil público do profissional:** mostra a capa, a foto, a frase, o número de serviços e avaliações e a nota média dada pelos clientes.
+
 ## Documentação técnica
+
 
 ### Diagrama de Classes
 
