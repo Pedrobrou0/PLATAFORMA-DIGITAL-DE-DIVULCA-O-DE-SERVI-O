@@ -1,42 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        {% block title %}
-            Plataforma de Serviços
-        {% endblock %}
-    </title>
-</head>
-
-<body>
-
-    <header>
-
-        <h1>
-            Plataforma de Serviços Autônomos
-        </h1>
-
-        {% include 'usuarios/menu.html' %}
-
-    </header>
-    <hr>
-
-    <main>
-
-        {% block content %}
-
-        {% endblock %}
-
-    </main>
-
-</body>
-
-</html>
+{% comment %}
+    O layout do site (AdminLTE) fica em templates/base.html, na raiz.
+    Este arquivo só repassa para ele, para nenhum template do app interacoes quebrar.
+{% endcomment %}

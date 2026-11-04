@@ -1,35 +1,45 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 
+{% block title %}Acesso negado{% endblock %}
 
-{% block title %}
+{% block page_title %}Acesso negado{% endblock %}
 
-    Acesso negado
-
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Acesso negado</li>
 {% endblock %}
-
 
 {% block content %}
 
-    <h2>
-        Acesso negado
-    </h2>
+    <div class="error-page mt-4">
 
-    <p>
-        Você não tem permissão para acessar esta página.
-    </p>
+        <h2 class="headline text-warning">403</h2>
 
-    {% if not user.is_authenticated %}
+        <div class="error-content">
 
-        <p>
-            <a href="{% url 'login' %}">
-                Entrar
+            <h3>
+                <i class="fas fa-lock text-warning"></i>
+                Você não tem permissão para acessar esta página.
+            </h3>
+
+            <p>
+                Esta área é de outro perfil de usuário (cliente, profissional
+                ou administrador), ou o item pertence a outra pessoa.
+            </p>
+
+            {% if not user.is_authenticated %}
+
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Entrar
+                </a>
+
+            {% endif %}
+
+            <a href="{% url 'home' %}" class="btn btn-default">
+                Voltar para o início
             </a>
-        </p>
 
-    {% endif %}
+        </div>
 
-    <a href="{% url 'home' %}">
-        Voltar para o início
-    </a>
+    </div>
 
 {% endblock %}
