@@ -31,7 +31,7 @@ urlpatterns = [
     path(
         'profissionais/<int:id>/deletar/',
         views.deletar_profissional,
-        name='deletar_profissional'
+       name='deletar_profissional'
     ),
     path(
         'entrar/',
@@ -88,5 +88,11 @@ urlpatterns = [
         views.minha_conta,
         name='minha_conta'
     ),
+    path(
+        'conta/perfil/',
+        views.personalizar_perfil,
+        name='personalizar_perfil'
+    ),
 ]
+
 

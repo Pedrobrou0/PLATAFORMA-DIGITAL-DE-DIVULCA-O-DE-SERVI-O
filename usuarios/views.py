@@ -17,11 +17,13 @@ from django.utils.http import (
     url_has_allowed_host_and_scheme,
     urlsafe_base64_decode,
 )
-from .models import Profissional
+from .models import Perfil, Profissional
 from .forms import (
     ClienteCadastroForm,
+    PerfilForm,
     ProfissionalCadastroForm,
     ProfissionalForm,
+
 )
 from .permissoes import (
     GRUPO_CLIENTE,
@@ -362,4 +364,26 @@ def excluir_conta(request):
 def minha_conta(request):
     return render(request, 'usuarios/minha_conta.html', {
         'grupos': request.user.groups.all()
+    })
+
+@login_required
+def personalizar_perfil(request):
+    perfil = Perfil.do_usuario(request.user)
+
+    form = PerfilForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=perfil
+    )
+
+    if form.is_valid():
+        form.save()
+
+        messages.success(request, 'Perfil atualizado! Veja como ficou.')
+
+        return redirect('minha_conta')
+
+    return render(request, 'usuarios/perfil_form.html', {
+        'form': form,
+        'perfil': perfil
     })

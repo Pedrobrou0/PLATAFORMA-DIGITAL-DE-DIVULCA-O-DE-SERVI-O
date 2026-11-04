@@ -22,8 +22,13 @@
         <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
 
             <div class="image">
-                <i class="fas fa-user-circle fa-2x text-light"></i>
+                {% if user.is_authenticated %}
+                    {% include 'partials/avatar.html' with perfil=meu_perfil tamanho=34 classe='elevation-2' %}
+                {% else %}
+                    <i class="fas fa-user-circle fa-2x text-light"></i>
+                {% endif %}
             </div>
+
 
             <div class="info">
                 {% if user.is_authenticated %}
@@ -144,7 +149,15 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="{% url 'personalizar_perfil' %}" class="nav-link {% if rota == 'personalizar_perfil' %}active{% endif %}">
+                            <i class="nav-icon fas fa-palette"></i>
+                            <p>Personalizar perfil</p>
+                        </a>
+                    </li>
+
                     {% if user.is_staff %}
+
 
                         <!-- Gerenciar Usuários (ADM) -->
                         <li class="nav-header">ADMINISTRAÇÃO</li>

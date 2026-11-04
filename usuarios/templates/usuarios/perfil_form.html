@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Personalizar perfil{% endblock %}
+
+{% block page_title %}Personalizar perfil{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'minha_conta' %}">Minha conta</a></li>
+    <li class="breadcrumb-item active">Personalizar perfil</li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <!-- Formulário -->
+        <div class="col-lg-7">
+
+            <div class="card card-primary card-outline">
+
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-palette mr-1"></i> Foto, capa e cor</h3>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <div class="card-body">
+                        {% include 'partials/form_campos.html' %}
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'minha_conta' %}" class="btn btn-default">Cancelar</a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-1"></i> Salvar perfil
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- Prévia ao vivo: muda enquanto o usuário escolhe as imagens -->
+        <div class="col-lg-5">
+
+            <p class="text-muted mb-2">
+                <i class="fas fa-eye mr-1"></i> Prévia: é assim que o seu perfil vai aparecer.
+            </p>
+
+            <div class="card card-widget widget-user shadow">
+
+                {% include 'partials/banner_perfil.html' with perfil=perfil nome=user.get_full_name|default:user.username descricao=user.groups.first.name|default:'Usuário' %}
+
+                <div class="card-footer text-center" style="padding-top: 65px;">
+
+                    <p id="previa-bio" class="mb-1">
+                        {{ perfil.bio|default:'Sua frase de apresentação aparece aqui.' }}
+                    </p>
+
+                    <p id="previa-instagram" class="text-muted mb-0 {% if not perfil.instagram %}d-none{% endif %}">
+                        <i class="fab fa-instagram mr-1"></i>@<span>{{ perfil.instagram }}</span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script>
+        // Prévia ao vivo do perfil: mostra a imagem escolhida antes de salvar.
+        (function () {
+            var topo = document.getElementById('banner-topo');
+            var areaFoto = document.getElementById('banner-foto');
+
+            function lerImagem(campo, aplicar) {
+                if (!campo) {
+                    return;
+                }
+
+                campo.addEventListener('change', function () {
+                    var arquivo = campo.files && campo.files[0];
+
+                    if (!arquivo) {
+                        return;
+                    }
+
+                    var leitor = new FileReader();
+
+                    leitor.onload = function (evento) {
+                        aplicar(evento.target.result);
+                    };
+
+                    leitor.readAsDataURL(arquivo);
+                });
+            }
+
+            lerImagem(document.getElementById('id_banner'), function (endereco) {
+                topo.className = topo.className.replace(/bg-gradient-\S+/g, '');
+                topo.style.background = "url('" + endereco + "') center center / cover";
+            });
+
+            lerImagem(document.getElementById('id_foto'), function (endereco) {
+                areaFoto.innerHTML =
+                    '<img src="' + endereco + '" alt="Prévia da foto" class="img-circle elevation-2" ' +
+                    'style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #fff;">';
+            });
+
+            var cor = document.getElementById('id_cor_tema');
+
+            if (cor) {
+                cor.addEventListener('change', function () {
+                    // Sem imagem de capa, o topo usa a cor escolhida.
+                    if (!topo.style.background) {
+                        topo.className = topo.className.replace(/bg-gradient-\S+/g, '') + ' bg-gradient-' + cor.value;
+                    }
+
+                    var circulo = areaFoto.querySelector('span');
+
+                    if (circulo) {
+                        circulo.className = circulo.className.replace(/\bbg-\S+/g, '') + ' bg-' + cor.value;
+                    }
+                });
+            }
+
+            var bio = document.getElementById('id_bio');
+            var previaBio = document.getElementById('previa-bio');
+
+            if (bio) {
+                bio.addEventListener('input', function () {
+                    previaBio.textContent = bio.value || 'Sua frase de apresentação aparece aqui.';
+                });
+            }
+
+            var instagram = document.getElementById('id_instagram');
+            var previaInstagram = document.getElementById('previa-instagram');
+
+            if (instagram) {
+                instagram.addEventListener('input', function () {
+                    var nome = instagram.value.replace('@', '').trim();
+
+                    previaInstagram.querySelector('span').textContent = nome;
+                    previaInstagram.classList.toggle('d-none', !nome);
+                });
+            }
+        })();
+    </script>
+
+{% endblock %}
