@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
@@ -23,6 +24,7 @@ def deletar_categoria(request, id):
     if request.method == 'POST':
         try:
             categoria.delete()
+            messages.success(request, 'Categoria excluída.')
         except ProtectedError:
             return render(request, 'servicos/confirmar_delete.html', {
                 'objeto': categoria,
@@ -46,6 +48,8 @@ def criar_categoria(request):
     if form.is_valid():
         form.save()
 
+        messages.success(request, 'Categoria criada.')
+
         return redirect('lista_categorias')
 
     return render(request, 'servicos/categoria_form.html', {
@@ -65,6 +69,8 @@ def editar_categoria(request, id):
 
     if form.is_valid():
         form.save()
+
+        messages.success(request, 'Categoria atualizada.')
 
         return redirect('lista_categorias')
 
@@ -140,6 +146,8 @@ def criar_servico(request):
         servico.profissional = request.user.profissional
         servico.save()
 
+        messages.success(request, 'Serviço publicado!')
+
         return redirect('detalhe_servico', id=servico.id)
 
     return render(request, 'servicos/servico_form.html', {
@@ -162,9 +170,11 @@ def editar_servico(request, id):
     )
 
     if form.is_valid():
-       form.save()
+        form.save()
 
-    return redirect('detalhe_servico', id=servico.id)
+        messages.success(request, 'Serviço atualizado.')
+
+        return redirect('detalhe_servico', id=servico.id)
 
     return render(request, 'servicos/servico_form.html', {
         'form': form
@@ -182,6 +192,7 @@ def deletar_servico(request, id):
     if request.method == 'POST':
         try:
             servico.delete()
+            messages.success(request, 'Serviço excluído.')
         except ProtectedError:
             return render(request, 'servicos/confirmar_delete.html', {
                 'objeto': servico,
@@ -207,6 +218,8 @@ def ativar_servico(request, id):
     if request.method == 'POST':
         servico.ativar()
 
+        messages.success(request, 'Serviço ativado. Ele voltou a aparecer na busca.')
+
     return redirect('detalhe_servico', id=servico.id)
 
 
@@ -221,7 +234,10 @@ def desativar_servico(request, id):
     if request.method == 'POST':
         servico.desativar()
 
+        messages.info(request, 'Serviço desativado. Ele não aparece mais na busca.')
+
     return redirect('detalhe_servico', id=servico.id)
+
 
 @login_required
 def meus_servicos(request):
