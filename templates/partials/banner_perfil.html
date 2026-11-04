@@ -1,0 +1,44 @@
+{% comment %}
+    Capa do perfil (widget-user do AdminLTE): banner, nome, frase e foto.
+    Sem banner, o topo usa a cor escolhida pelo usuário.
+    Uso, dentro de <div class="card card-widget widget-user">:
+    {% include 'partials/banner_perfil.html' with perfil=perfil nome='...' descricao='...' %}
+{% endcomment %}
+
+{% with foto=perfil.imagem_foto %}
+
+    <div id="banner-topo"
+         class="widget-user-header text-white {% if not perfil.banner %}bg-gradient-{{ perfil.cor_tema|default:'primary' }}{% endif %}"
+         style="height: 190px;{% if perfil.banner %} background: url('{{ perfil.banner.url }}') center center / cover;{% endif %}">
+
+        <h3 class="widget-user-username" style="text-shadow: 0 1px 4px rgba(0, 0, 0, .6);">
+            {{ nome }}
+        </h3>
+
+        <h5 class="widget-user-desc" style="text-shadow: 0 1px 4px rgba(0, 0, 0, .6);">
+            {{ descricao }}
+        </h5>
+
+    </div>
+
+    <div id="banner-foto" class="widget-user-image" style="top: 140px; margin-left: -50px;">
+
+        {% if foto %}
+
+            <img src="{{ foto.url }}"
+                 alt="Foto de {{ nome }}"
+                 class="img-circle elevation-2"
+                 style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #fff;">
+
+        {% else %}
+
+            <span class="img-circle elevation-2 bg-{{ perfil.cor_tema|default:'primary' }} d-flex align-items-center justify-content-center"
+                  style="width: 100px; height: 100px; border: 3px solid #fff; font-size: 42px;">
+                <i class="fas fa-user"></i>
+            </span>
+
+        {% endif %}
+
+    </div>
+
+{% endwith %}

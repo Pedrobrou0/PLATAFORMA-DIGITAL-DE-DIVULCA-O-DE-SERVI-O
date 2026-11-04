@@ -1,0 +1,24 @@
+{% comment %}
+    Foto redonda do usuário. Sem foto, mostra um círculo na cor do perfil.
+    Uso: {% include 'partials/avatar.html' with perfil=meu_perfil tamanho=34 %}
+{% endcomment %}
+
+{% with foto=perfil.imagem_foto tamanho=tamanho|default:40 %}
+
+    {% if foto %}
+
+        <img src="{{ foto.url }}"
+             alt="Foto de perfil"
+             class="img-circle {{ classe }}"
+             style="width: {{ tamanho }}px; height: {{ tamanho }}px; object-fit: cover;">
+
+    {% else %}
+
+        <span class="img-circle {{ classe }} bg-{{ perfil.cor_tema|default:'secondary' }} d-inline-flex align-items-center justify-content-center"
+              style="width: {{ tamanho }}px; height: {{ tamanho }}px; font-size: {% widthratio tamanho 100 45 %}px;">
+            <i class="fas fa-user"></i>
+        </span>
+
+    {% endif %}
+
+{% endwith %}
