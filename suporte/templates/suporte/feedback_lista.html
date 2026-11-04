@@ -1,51 +1,74 @@
-{% extends 'suporte/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Feedbacks
+{% block title %}Feedbacks{% endblock %}
+
+{% block page_title %}
+    {% if perms.suporte.view_feedback %}Gerenciar feedbacks{% else %}Meus feedbacks{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Feedbacks</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        {% if perms.suporte.view_feedback %}
-            Gerenciar feedbacks
-        {% else %}
-            Meus feedbacks
-        {% endif %}
-    </h2>
+    <div class="card">
 
-    {% if perms.suporte.add_feedback %}
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-comment-dots mr-1"></i>
+                Sugestões, opiniões e problemas sobre a plataforma
+            </h3>
 
-        <a href="{% url 'criar_feedback' %}">
-            Enviar feedback
-        </a>
+            {% if perms.suporte.add_feedback %}
+                <div class="card-tools">
+                    <a href="{% url 'criar_feedback' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus mr-1"></i> Enviar feedback
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
-    {% endif %}
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
 
-    <ul>
+                    <thead>
+                        <tr>
+                            <th>Enviado por</th>
+                            <th>Tipo</th>
+                            <th>Mensagem</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
 
-        {% for feedback in feedbacks %}
+                    <tbody>
+                        {% for feedback in feedbacks %}
+                            <tr>
+                                <td>{{ feedback.usuario }}</td>
+                                <td>{{ feedback.get_tipo_display }}</td>
+                                <td>{{ feedback.mensagem|truncatechars:60 }}</td>
+                                <td class="text-nowrap">{{ feedback.data_envio|date:'d/m/Y' }}</td>
+                                <td>{% include 'suporte/status_feedback.html' %}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'detalhe_feedback' feedback.id %}" class="btn btn-sm btn-default">
+                                        <i class="fas fa-eye mr-1"></i> Detalhar
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Nenhum feedback enviado.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
 
-            <li>
-                {{ feedback.usuario }}
-               —
-                {{ feedback.get_tipo_display }}
-                —
-                {{ feedback.get_status_display }}
+                </table>
+            </div>
+        </div>
 
-                <a href="{% url 'detalhe_feedback' feedback.id %}">
-                    Detalhar
-                </a>
-            </li>
-
-        {% empty %}
-
-            <li>
-                Nenhum feedback cadastrado.
-            </li>
-
-        {% endfor %}
-
-    </ul>
+    </div>
 
 {% endblock %}

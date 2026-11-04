@@ -1,0 +1,14 @@
+{% comment %}
+    Selo colorido com o status do feedback.
+    Uso: {% include 'suporte/status_feedback.html' %} com a variável feedback no contexto.
+{% endcomment %}
+
+{% if feedback.status == 'PENDENTE' %}
+    <span class="badge badge-warning">{{ feedback.get_status_display }}</span>
+{% elif feedback.status == 'EM_ANALISE' %}
+    <span class="badge badge-info">{{ feedback.get_status_display }}</span>
+{% elif feedback.status == 'RESOLVIDO' %}
+    <span class="badge badge-success">{{ feedback.get_status_display }}</span>
+{% else %}
+    <span class="badge badge-secondary">{{ feedback.get_status_display }}</span>
+{% endif %}

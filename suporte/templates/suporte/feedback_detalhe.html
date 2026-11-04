@@ -1,56 +1,64 @@
-{% extends 'suporte/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Feedback
+{% block title %}Feedback {{ feedback.id }}{% endblock %}
+
+{% block page_title %}Feedback nº {{ feedback.id }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_feedbacks' %}">Feedbacks</a></li>
+    <li class="breadcrumb-item active">Nº {{ feedback.id }}</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        Feedback {{ feedback.id }}
-    </h2>
+    <div class="row">
 
-    <p>
-        Usuário:
-        {{ feedback.usuario }}
-    </p>
+        <div class="col-lg-8">
 
-    <p>
-        Tipo:
-        {{ feedback.get_tipo_display }}
-    </p>
+            <div class="card card-primary card-outline">
 
-    <p>
-        Mensagem:
-        {{ feedback.mensagem }}
-    </p>
+                <div class="card-header">
+                    <h3 class="card-title">{{ feedback.get_tipo_display }}</h3>
 
-    <p>
-        Status:
-        {{ feedback.get_status_display }}
-    </p>
+                    <div class="card-tools">
+                        {% include 'suporte/status_feedback.html' %}
+                    </div>
+                </div>
 
-    <p>
-        Data de envio:
-        {{ feedback.data_envio }}
-   </p>
+                <div class="card-body">
 
-    {% if perms.suporte.change_feedback %}
+                    <p>{{ feedback.mensagem|linebreaksbr }}</p>
 
-        <a href="{% url 'editar_feedback' feedback.id %}">
-            Alterar status
-        </a>
+                    <p class="text-muted small mb-0">
+                        Enviado por {{ feedback.usuario }} em {{ feedback.data_envio|date:'d/m/Y H:i' }}
+                    </p>
 
-    {% endif %}
+                </div>
 
-    {% if perms.suporte.delete_feedback %}
+                <div class="card-footer">
 
-        |
+                    <a href="{% url 'lista_feedbacks' %}" class="btn btn-default">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar
+                    </a>
 
-        <a href="{% url 'deletar_feedback' feedback.id %}">
-            Excluir
-        </a>
+                    {% if perms.suporte.change_feedback %}
+                        <a href="{% url 'editar_feedback' feedback.id %}" class="btn btn-warning">
+                            <i class="fas fa-exchange-alt mr-1"></i> Alterar status
+                        </a>
+                    {% endif %}
 
-    {% endif %}
+                    {% if perms.suporte.delete_feedback %}
+                        <a href="{% url 'deletar_feedback' feedback.id %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt mr-1"></i> Excluir
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}

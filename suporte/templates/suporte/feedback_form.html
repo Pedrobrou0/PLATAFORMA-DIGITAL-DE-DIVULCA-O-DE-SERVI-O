@@ -1,25 +1,59 @@
-{% extends 'suporte/base.html' %}
+{% extends 'base.html' %}
 
-{% block title %}
-    Feedback
+{% block title %}Feedback{% endblock %}
+
+{% block page_title %}
+    {% if form.instance.pk %}Alterar status do feedback{% else %}Enviar feedback{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'lista_feedbacks' %}">Feedbacks</a></li>
+    <li class="breadcrumb-item active">Formulário</li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>
-        Feedback
-    </h2>
+    <div class="row">
 
-    <form method="post">
+        <div class="col-lg-6">
 
-        {% csrf_token %}
+            <div class="card card-primary card-outline">
 
-        {{ form.as_p }}
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-comment-dots mr-1"></i> Feedback sobre a plataforma</h3>
+                </div>
 
-        <button type="submit">
-            Salvar
-        </button>
+                <form method="post">
 
-    </form>
+                    {% csrf_token %}
+
+                    <div class="card-body">
+
+                        {% if not form.instance.pk %}
+                            <p class="text-muted">
+                                Conte uma sugestão, opinião ou problema que você encontrou.
+                                O administrador acompanha cada mensagem.
+                            </p>
+                        {% endif %}
+
+                        {% include 'partials/form_campos.html' %}
+
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'lista_feedbacks' %}" class="btn btn-default">Cancelar</a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-1"></i> Salvar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
