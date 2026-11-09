@@ -13,8 +13,10 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 import os
 
+import dj_database_url
 from django.contrib.messages import constants as mensagens
 from dotenv import load_dotenv
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +40,23 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Deploy no Render: o Render cria a variável RENDER_EXTERNAL_HOSTNAME
+# com o endereço do site (ex.: plataforma-servicos.onrender.com).
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS = [f'https://{RENDER_EXTERNAL_HOSTNAME}']
+
+    # Cookies de sessão e de CSRF só trafegam em HTTPS.
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+# O Render recebe o acesso em HTTPS e repassa para o Django;
+# este cabeçalho avisa ao Django que a conexão original era segura.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
 
 # Application definition
 
@@ -58,6 +77,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise entrega os arquivos estáticos (AdminLTE) em produção.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,12 +113,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+# No Render, a variável DATABASE_URL aponta para o Postgres.
+# No computador de cada um, sem essa variável, continua o SQLite.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
+
 
 
 # Password validation
@@ -140,6 +164,22 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# Pasta onde o collectstatic junta tudo para o deploy (não vai para o Git).
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise comprime os arquivos estáticos. Não troque por
+# CompressedManifestStaticFilesStorage: o CSS do Font Awesome cita
+# fontes .svg/.eot/.ttf que não estão na pasta static/ e o deploy quebra.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
+
 
 
 # Email
