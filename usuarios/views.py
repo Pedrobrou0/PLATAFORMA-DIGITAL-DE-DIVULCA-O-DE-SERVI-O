@@ -39,7 +39,6 @@ from servicos.models import Categoria, Servico
 from suporte.models import Feedback, StatusFeedback, TipoAutorAvaliacao
 
 
-@login_required
 def home(request):
     # Página inicial com destaques (RF018) no formato de dashboard.
     contexto = {
@@ -87,8 +86,6 @@ def home(request):
     return render(request, 'usuarios/home.html', contexto)
 
 
-@login_required
-@permission_required('usuarios.view_profissional', raise_exception=True)
 def lista_profissionais(request):
     profissionais = Profissional.objects.all()
 
@@ -97,8 +94,6 @@ def lista_profissionais(request):
     })
 
 
-@login_required
-@permission_required('usuarios.view_profissional', raise_exception=True)
 def detalhe_profissional(request, id):
     profissional = Profissional.objects.get(id=id)
 
