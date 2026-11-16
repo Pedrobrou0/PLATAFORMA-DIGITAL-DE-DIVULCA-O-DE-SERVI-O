@@ -25,6 +25,7 @@ O projeto está sendo desenvolvido como atividade acadêmica da disciplina de Pr
 - [Fluxo de trabalho com Git](#fluxo-de-trabalho-com-git)
 - [Autenticação e permissões](#autenticação-e-permissões)
 - [Interface (front-end)](#interface-front-end)
+- [Landing page](#landing-page)
 - [Personalização do perfil](#personalização-do-perfil)
 - [Documentação técnica](#documentação-técnica)
 - [Equipe](#equipe)
@@ -155,6 +156,8 @@ As rotas abaixo refletem as URLs já implementadas em cada aplicativo. Todas fic
 
 | Rota | Descrição |
 |---|---|
+| `/` | Landing page: primeira página do site, aberta para todos. |
+| `/painel/` | Painel com os números da plataforma e os destaques (RF018). |
 | `/profissionais/` | Lista todos os profissionais cadastrados. |
 | `/profissionais/novo/` | Formulário de cadastro de um novo profissional. |
 | `/profissionais/<id>/` | Detalhe de um profissional específico. |
@@ -622,6 +625,22 @@ usuarios/templatetags/formularios.py   # filtro que aplica as classes do Bootstr
 - **Menu por perfil:** o menu lateral muda conforme quem está logado (`user.is_authenticated`, `user.profissional` e `perms`).
 - **Mensagens:** as views usam `django.contrib.messages` (`messages.success`, `messages.info` etc.) e o `base.html` mostra cada mensagem como alerta do Bootstrap.
 - **Formulários:** o template `partials/form_campos.html` desenha cada campo com label, ajuda e erros, usando o filtro `{{ campo|bootstrap }}`.
+
+## Landing page
+
+A primeira página do site (rota `/`, view `landing` em `usuarios/views.py`) é uma landing page aberta para todos: visitante, cliente, profissional e administrador. Ela apresenta a plataforma e leva para o painel, que agora fica em `/painel/` (o nome da rota continua `home`, então todos os `{% url 'home' %}` seguem funcionando).
+
+```
+static/landing/
+├── css/landing.css     # estilos das seções da landing
+└── img/bg-masthead.jpg # imagem de fundo do topo
+templates/landing.html  # página completa, sem o menu lateral
+```
+
+- **Base:** layout adaptado do template gratuito [Landing Page do Start Bootstrap](https://github.com/StartBootstrap/startbootstrap-landing-page) (v5.1.0, licença MIT), que usa o **Bootstrap 4.6**, a mesma versão que já vem dentro do `adminlte.min.css`. Por isso o `landing.css` traz só os estilos das seções; o Bootstrap continua vindo do AdminLTE e os ícones do Font Awesome do projeto.
+- **Seções:** topo com a busca de serviços e as categorias com mais serviços, "Como funciona", vitrine para clientes e profissionais, números da plataforma (vindos do banco) e chamada para o cadastro.
+- **Quem já entrou** continua logado: a barra mostra "Olá, nome" e o botão **Ir para o painel**. Quem não entrou vê **Entrar** e **Cadastre-se**.
+- **Navegação:** o logo do menu lateral e o "Voltar para o início" das telas de acesso levam para a landing, e quem sai da conta volta para ela (`LOGOUT_REDIRECT_URL = 'landing'`). Depois do login, o usuário vai direto para o painel (`LOGIN_REDIRECT_URL = 'home'`).
 
 ## Personalização do perfil
 
