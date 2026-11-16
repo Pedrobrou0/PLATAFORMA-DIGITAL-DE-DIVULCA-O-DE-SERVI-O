@@ -1,0 +1,120 @@
+/*
+ * Estilos da landing page (primeira página do site).
+ *
+ * Adaptado do template "Landing Page" v5.1.0 do Start Bootstrap,
+ * licença MIT: https://github.com/StartBootstrap/startbootstrap-landing-page
+ *
+ * O template usa o Bootstrap 4.6, a mesma versão que já vem dentro do
+ * adminlte.min.css. Por isso este arquivo tem só os estilos das seções
+ * da landing; o Bootstrap em si continua vindo do AdminLTE.
+ */
+
+/* ---------- Topo (masthead) com imagem de fundo ---------- */
+header.masthead {
+    position: relative;
+    background-color: #343a40;
+    background: url("../img/bg-masthead.jpg") no-repeat center center;
+    background-size: cover;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+}
+
+header.masthead h1 {
+    font-size: 2rem;
+}
+
+/* Camada escura por cima da imagem, para o texto branco aparecer bem. */
+header.masthead .overlay,
+.call-to-action .overlay {
+    position: absolute;
+    background-color: #212529;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+}
+
+@media (min-width: 768px) {
+    header.masthead {
+        padding-top: 10rem;
+        padding-bottom: 10rem;
+    }
+
+    header.masthead h1 {
+        font-size: 3rem;
+    }
+}
+
+/* ---------- Como funciona (grade de ícones) ---------- */
+.features-icons {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+.features-icons .features-icons-item {
+    max-width: 20rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon {
+    height: 7rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon i {
+    font-size: 4.5rem;
+    transition: font-size 0.2s;
+}
+
+.features-icons .features-icons-item:hover .features-icons-icon i {
+    font-size: 5rem;
+}
+
+/* ---------- Vitrine (texto de um lado, painel colorido do outro) ---------- */
+.showcase .showcase-text {
+    padding: 3rem;
+}
+
+.showcase .showcase-img {
+    min-height: 18rem;
+}
+
+.showcase .showcase-img i {
+    font-size: 8rem;
+    opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+    .showcase .showcase-text {
+        padding: 6rem;
+    }
+
+    .showcase .showcase-img {
+        min-height: 26rem;
+    }
+}
+
+/* ---------- Números da plataforma ---------- */
+.numeros {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+.numeros .numero-item {
+    max-width: 18rem;
+}
+
+/* ---------- Chamada final (call to action) ---------- */
+.call-to-action {
+    position: relative;
+    background-color: #343a40;
+    background: url("../img/bg-masthead.jpg") no-repeat center center;
+    background-size: cover;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+/* ---------- Rodapé ---------- */
+footer.footer {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
