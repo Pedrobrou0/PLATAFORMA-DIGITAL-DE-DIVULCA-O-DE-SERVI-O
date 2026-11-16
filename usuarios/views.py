@@ -39,8 +39,26 @@ from servicos.models import Categoria, Servico
 from suporte.models import Feedback, StatusFeedback, TipoAutorAvaliacao
 
 
+def landing(request):
+    # Landing page: primeira página do site, aberta para todos
+    # (visitante, cliente, profissional e administrador).
+    # Os botões levam para o painel; quem já entrou continua logado.
+    contexto = {
+        'total_servicos': Servico.objects.filter(ativo=True).count(),
+        'total_profissionais': Profissional.objects.count(),
+        'total_categorias': Categoria.objects.count(),
+
+        'categorias': Categoria.objects.annotate(
+            qtd_servicos=Count('servicos', filter=Q(servicos__ativo=True))
+        ).filter(qtd_servicos__gt=0).order_by('-qtd_servicos', 'nome')[:6],
+    }
+
+    return render(request, 'landing.html', contexto)
+
+
 def home(request):
-    # Página inicial com destaques (RF018) no formato de dashboard.
+    # Painel com destaques (RF018) no formato de dashboard.
+    # Desde a landing page, fica no endereço /painel/.
     contexto = {
         'total_servicos': Servico.objects.filter(ativo=True).count(),
         'total_profissionais': Profissional.objects.count(),
