@@ -201,7 +201,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+# Quem sai da conta volta para a landing page.
+LOGOUT_REDIRECT_URL = 'landing'
 
 # Mensagens (django.contrib.messages) com as cores do Bootstrap:
 # messages.error vira a classe alert-danger.
