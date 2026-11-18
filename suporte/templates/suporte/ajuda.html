@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% comment %}
+    Central de Ajuda (RF021). A aba aberta vem da view; o conteúdo de cada
+    aba fica em suporte/ajuda/, um arquivo por aba.
+{% endcomment %}
+
+{% block title %}Ajuda{% endblock %}
+
+{% block page_title %}Central de Ajuda{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Ajuda</li>
+{% endblock %}
+
+{% block content %}
+
+    <!-- Apresentação e busca nas perguntas -->
+    <div class="callout callout-info">
+        <div class="row align-items-center">
+
+            <div class="col-md-7">
+                <h5 class="mb-1">
+                    <i class="fas fa-life-ring text-info mr-1"></i>
+                    Como podemos ajudar?
+                </h5>
+
+                <p class="mb-2 mb-md-0">
+                    Escolha o seu perfil para ver o passo a passo, ou procure a sua
+                    dúvida nas perguntas frequentes.
+                </p>
+            </div>
+
+            <div class="col-md-5">
+                <label for="busca-ajuda" class="sr-only">Procurar nas perguntas frequentes</label>
+
+                <div class="input-group">
+                    <input type="search" id="busca-ajuda" class="form-control" placeholder="Ex.: cancelar, senha, avaliação" autocomplete="off">
+
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Abas por perfil -->
+    <div class="card card-primary card-outline card-outline-tabs">
+
+        <div class="card-header p-0 border-bottom-0">
+            <ul class="nav nav-tabs" id="abas-ajuda" role="tablist">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if aba == 'cliente' %}active{% endif %}" id="aba-cliente-link" data-toggle="pill" href="#aba-cliente" role="tab" aria-controls="aba-cliente" aria-selected="{% if aba == 'cliente' %}true{% else %}false{% endif %}">
+                        <i class="fas fa-user mr-1"></i> Visitante e cliente
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if aba == 'profissional' %}active{% endif %}" id="aba-profissional-link" data-toggle="pill" href="#aba-profissional" role="tab" aria-controls="aba-profissional" aria-selected="{% if aba == 'profissional' %}true{% else %}false{% endif %}">
+                        <i class="fas fa-user-tie mr-1"></i> Profissional
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if aba == 'perguntas' %}active{% endif %}" id="aba-perguntas-link" data-toggle="pill" href="#aba-perguntas" role="tab" aria-controls="aba-perguntas" aria-selected="{% if aba == 'perguntas' %}true{% else %}false{% endif %}">
+                        <i class="fas fa-question-circle mr-1"></i> Perguntas frequentes
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <div class="tab-content">
+
+                <div class="tab-pane fade {% if aba == 'cliente' %}show active{% endif %}" id="aba-cliente" role="tabpanel" aria-labelledby="aba-cliente-link">
+                    {% include 'suporte/ajuda/cliente.html' %}
+                </div>
+
+                <div class="tab-pane fade {% if aba == 'profissional' %}show active{% endif %}" id="aba-profissional" role="tabpanel" aria-labelledby="aba-profissional-link">
+                    {% include 'suporte/ajuda/profissional.html' %}
+                </div>
+
+                <div class="tab-pane fade {% if aba == 'perguntas' %}show active{% endif %}" id="aba-perguntas" role="tabpanel" aria-labelledby="aba-perguntas-link">
+                    {% include 'suporte/ajuda/perguntas.html' %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Busca nas perguntas frequentes: abre a aba e mostra só as perguntas
+    // que têm a palavra digitada (sem diferenciar acentos e maiúsculas).
+    (function () {
+        var campo = document.getElementById('busca-ajuda');
+        var perguntas = document.querySelectorAll('#acordeao-perguntas .pergunta');
+        var aviso = document.getElementById('perguntas-sem-resultado');
+
+        function normalizar(texto) {
+            return texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        }
+
+        campo.addEventListener('input', function () {
+            var termo = normalizar(campo.value.trim());
+            var achou = 0;
+
+            if (termo) {
+                $('#aba-perguntas-link').tab('show');
+            }
+
+            perguntas.forEach(function (pergunta) {
+                var bate = !termo || normalizar(pergunta.textContent).indexOf(termo) !== -1;
+                pergunta.style.display = bate ? '' : 'none';
+
+                if (bate) {
+                    achou += 1;
+                }
+            });
+
+            aviso.style.display = achou ? 'none' : '';
+        });
+    })();
+</script>
+{% endblock %}

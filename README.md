@@ -26,6 +26,8 @@ O projeto está sendo desenvolvido como atividade acadêmica da disciplina de Pr
 - [Autenticação e permissões](#autenticação-e-permissões)
 - [Interface (front-end)](#interface-front-end)
 - [Landing page](#landing-page)
+- [Central de Ajuda](#central-de-ajuda)
+- [Páginas de erro](#páginas-de-erro)
 - [Personalização do perfil](#personalização-do-perfil)
 - [Documentação técnica](#documentação-técnica)
 - [Equipe](#equipe)
@@ -158,6 +160,7 @@ As rotas abaixo refletem as URLs já implementadas em cada aplicativo. Todas fic
 |---|---|
 | `/` | Landing page: primeira página do site, aberta para todos. |
 | `/painel/` | Painel com os números da plataforma e os destaques (RF018). |
+| `/ajuda/` | Central de Ajuda com tutoriais por perfil e perguntas frequentes (RF021). |
 | `/profissionais/` | Lista todos os profissionais cadastrados. |
 | `/profissionais/novo/` | Formulário de cadastro de um novo profissional. |
 | `/profissionais/<id>/` | Detalhe de um profissional específico. |
@@ -641,6 +644,22 @@ templates/landing.html  # página completa, sem o menu lateral
 - **Seções:** topo com a busca de serviços e as categorias com mais serviços, "Como funciona", vitrine para clientes e profissionais, números da plataforma (vindos do banco) e chamada para o cadastro.
 - **Quem já entrou** continua logado: a barra mostra "Olá, nome" e o botão **Ir para o painel**. Quem não entrou vê **Entrar** e **Cadastre-se**.
 - **Navegação:** o logo do menu lateral e o "Voltar para o início" das telas de acesso levam para a landing, e quem sai da conta volta para ela (`LOGOUT_REDIRECT_URL = 'landing'`). Depois do login, o usuário vai direto para o painel (`LOGIN_REDIRECT_URL = 'home'`).
+
+## Central de Ajuda
+
+A Central de Ajuda (rota `/ajuda/`, view `ajuda` em `suporte/views.py`) atende ao RF021. Ela é pública, fica no menu lateral (**Ajuda**) e no rodapé da landing page e abre na aba do perfil de quem está usando. Também dá para escolher a aba pelo endereço, como em `/ajuda/?aba=perguntas`.
+
+- **Templates:** `suporte/templates/suporte/ajuda.html` (abas e busca) e um arquivo por aba em `suporte/templates/suporte/ajuda/` (`cliente.html`, `profissional.html` e `perguntas.html`).
+- **Passo a passo:** componente *timeline* do AdminLTE, com botões que levam para cada tela.
+- **Perguntas frequentes:** cards recolhíveis (*collapse* do Bootstrap), filtrados pela busca do topo enquanto a pessoa digita.
+
+## Páginas de erro
+
+Com `DEBUG=False` (como no Render), o Django usa os templates `templates/404.html` e `templates/500.html` no lugar das páginas padrão (RNF014).
+
+- **404:** endereço errado ou item que não existe mais. Usa o layout da plataforma, com busca de serviços e atalhos. As views usam `get_object_or_404`, então um número de serviço, profissional ou solicitação que não existe mostra esta página em vez de um erro 500.
+- **500:** página independente do `base.html`, porque o Django a monta sem o contexto da requisição; assim ela aparece mesmo quando o erro acontece no próprio layout.
+- Para testar no computador, coloque `DEBUG=False` no `.env`, rode `python manage.py collectstatic` e abra um endereço que não existe, como `/servicos/9999/`. Depois volte o `DEBUG` para `True`.
 
 ## Personalização do perfil
 

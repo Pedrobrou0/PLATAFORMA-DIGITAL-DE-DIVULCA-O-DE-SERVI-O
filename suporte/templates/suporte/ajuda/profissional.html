@@ -1,0 +1,131 @@
+{% comment %}
+    Aba "Profissional" da Central de Ajuda.
+    Do cadastro até a avaliação do cliente, no componente timeline do AdminLTE.
+{% endcomment %}
+
+<p class="lead mb-4">
+    Divulgue os seus serviços de graça, receba pedidos dos clientes de Guanambi e região
+    e monte a sua reputação com as avaliações.
+</p>
+
+<div class="timeline">
+
+    <div class="time-label">
+        <span class="bg-success">Começando</span>
+    </div>
+
+    <div>
+        <i class="fas fa-id-badge bg-success"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>1. Cadastre-se como profissional</strong></h3>
+            <div class="timeline-body">
+                Clique em <strong>Cadastre-se</strong> e escolha <strong>Sou profissional</strong>.
+                Além de usuário, e-mail e senha, informe telefone com WhatsApp, cidade, uma
+                descrição do seu trabalho e as categorias em que você atua (segure
+                <kbd>Ctrl</kbd> para marcar mais de uma no computador). A foto é opcional.
+            </div>
+            {% if not user.is_authenticated %}
+                <div class="timeline-footer">
+                    <a href="{% url 'criar_profissional' %}" class="btn btn-success btn-sm">Criar conta de profissional</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-palette bg-success"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>2. Deixe o perfil com a sua cara</strong></h3>
+            <div class="timeline-body">
+                Em <strong>Personalizar perfil</strong> você envia a foto e a imagem de capa
+                (JPG ou PNG, até 5 MB), escolhe a cor do perfil, escreve uma frase de apresentação e
+                coloca o seu Instagram. A prévia mostra o resultado antes de salvar. Para mudar
+                telefone, cidade, descrição ou categorias, use <strong>Minha conta</strong> →
+                <strong>Editar dados profissionais</strong>.
+            </div>
+            {% if user.is_authenticated %}
+                <div class="timeline-footer">
+                    <a href="{% url 'personalizar_perfil' %}" class="btn btn-success btn-sm">Personalizar perfil</a>
+                    <a href="{% url 'minha_conta' %}" class="btn btn-default btn-sm">Minha conta</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="time-label">
+        <span class="bg-primary">Seus serviços</span>
+    </div>
+
+    <div>
+        <i class="fas fa-plus bg-primary"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>3. Publique um serviço</strong></h3>
+            <div class="timeline-body">
+                Abra <strong>Meus serviços</strong> e clique em <strong>Novo serviço</strong>.
+                Escolha a categoria, dê um título claro (é por ele que os clientes buscam), descreva
+                o que está incluído e informe o preço. A imagem é opcional. Depois de salvar, o
+                serviço já aparece na lista pública.
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-toolbox bg-primary"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>4. Mantenha os serviços em dia</strong></h3>
+            <div class="timeline-body">
+                Em <strong>Meus serviços</strong> ficam todos os seus serviços, com os botões para
+                ver, <strong>Editar</strong> e <strong>Excluir</strong>. Se você não puder atender por
+                um tempo, abra o serviço e clique em <strong>Desativar</strong>: ele deixa de aparecer na
+                lista de Serviços e na busca, e volta quando você clicar em <strong>Ativar</strong>. Serviços que já têm
+                solicitações não podem ser excluídos, só desativados, para guardar o histórico.
+            </div>
+            {% if user.profissional %}
+                <div class="timeline-footer">
+                    <a href="{% url 'meus_servicos' %}" class="btn btn-primary btn-sm">Meus serviços</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="time-label">
+        <span class="bg-warning">Pedidos dos clientes</span>
+    </div>
+
+    <div>
+        <i class="fas fa-inbox bg-warning"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>5. Responda as solicitações</strong></h3>
+            <div class="timeline-body">
+                Os pedidos chegam em <strong>Solicitações recebidas</strong> como
+                <span class="badge badge-warning">Pendente</span>, e o número de pedidos esperando
+                resposta aparece no painel. Clique em <strong>Detalhar</strong>, leia a descrição do
+                cliente e use <strong>Aceitar</strong> ou <strong>Recusar</strong>. Depois de aceitar,
+                combine os detalhes direto com o cliente.
+            </div>
+            {% if user.profissional %}
+                <div class="timeline-footer">
+                    <a href="{% url 'lista_solicitacoes' %}" class="btn btn-warning btn-sm">Solicitações recebidas</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-flag-checkered bg-warning"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>6. Conclua o serviço</strong></h3>
+            <div class="timeline-body">
+                Quando terminar o trabalho, abra a solicitação aceita e clique em
+                <strong>Concluir</strong>. O status muda para
+                <span class="badge badge-success">Concluída</span>. A partir daí o cliente pode
+                avaliar você, e você pode usar <strong>Avaliar cliente</strong> na mesma página.
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-check bg-gray"></i>
+    </div>
+
+</div>

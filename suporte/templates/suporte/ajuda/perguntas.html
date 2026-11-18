@@ -1,0 +1,108 @@
+{% comment %}
+    Aba "Perguntas frequentes" da Central de Ajuda.
+    Cada pergunta é um card recolhível (collapse do Bootstrap) com a classe
+    "pergunta", usada pela busca do topo da página (ajuda.html).
+{% endcomment %}
+
+<div id="acordeao-perguntas">
+
+    <div class="card card-light pergunta">
+        <div class="card-header">
+            <h4 class="card-title w-100">
+                <a class="d-block w-100 text-dark" data-toggle="collapse" href="#pergunta-1">
+                    Preciso ter conta para ver os serviços?
+                </a>
+            </h4>
+        </div>
+        <div id="pergunta-1" class="collapse" data-parent="#acordeao-perguntas">
+            <div class="card-body">
+                Não. Qualquer visitante pode ver os serviços, os profissionais, as categorias e as
+                avaliações, buscar e usar o botão do WhatsApp. A conta só é pedida para solicitar um
+                serviço, avaliar e enviar feedback.
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-light pergunta">
+        <div class="card-header">
+            <h4 class="card-title w-100">
+                <a class="d-block w-100 text-dark" data-toggle="collapse" href="#pergunta-2">
+                    Não achei o serviço que procuro. O que faço?
+                </a>
+            </h4>
+        </div>
+        <div id="pergunta-2" class="collapse" data-parent="#acordeao-perguntas">
+            <div class="card-body">
+                A busca procura no título dos serviços. Tente uma palavra mais curta (por exemplo,
+                "chuveiro" em vez de "instalação de chuveiro novo") ou use o filtro de
+                <strong>Categoria</strong> na tela de Serviços. Também vale olhar a lista de
+                <strong>Profissionais</strong>, que mostra a área de atuação de cada um.
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-light pergunta">
+        <div class="card-header">
+            <h4 class="card-title w-100">
+                <a class="d-block w-100 text-dark" data-toggle="collapse" href="#pergunta-3">
+                    Como cancelo uma solicitação?
+                </a>
+            </h4>
+        </div>
+        <div id="pergunta-3" class="collapse" data-parent="#acordeao-perguntas">
+            <div class="card-body">
+                Abra <strong>Minhas solicitações</strong>, clique em <strong>Detalhar</strong> e use
+                <strong>Cancelar solicitação</strong>. O cancelamento só é possível enquanto o pedido
+                está Pendente ou Aceito; pedidos recusados, cancelados ou concluídos não mudam mais.
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-light pergunta">
+        <div class="card-header">
+            <h4 class="card-title w-100">
+                <a class="d-block w-100 text-dark" data-toggle="collapse" href="#pergunta-4">
+                    Esqueci a minha senha. Como recupero?
+                </a>
+            </h4>
+        </div>
+        <div id="pergunta-4" class="collapse" data-parent="#acordeao-perguntas">
+            <div class="card-body">
+                Na tela <strong>Entrar</strong>, clique em <strong>Esqueci minha senha</strong> e
+                informe o e-mail do cadastro para receber o link de redefinição. Se o e-mail não
+                chegar, confira a caixa de spam ou procure a equipe da plataforma. Se você lembra da
+                senha atual e só quer trocá-la, use <strong>Alterar senha</strong> no menu do seu nome.
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-light pergunta">
+        <div class="card-header">
+            <h4 class="card-title w-100">
+                <a class="d-block w-100 text-dark" data-toggle="collapse" href="#pergunta-5">
+                    Por que não consigo excluir um serviço?
+                </a>
+            </h4>
+        </div>
+        <div id="pergunta-5" class="collapse" data-parent="#acordeao-perguntas">
+            <div class="card-body">
+                Serviços que já receberam solicitações ficam guardados para manter o histórico dos
+                pedidos. Nesse caso, abra o serviço e clique em <strong>Desativar</strong>: ele deixa
+                de aparecer na lista de Serviços e na busca, e você pode ativá-lo de novo quando
+                quiser.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Mostrado pela busca do topo quando nenhuma pergunta combina com o texto -->
+<div id="perguntas-sem-resultado" class="alert alert-light border text-center mb-0" style="display: none;">
+    <i class="fas fa-search mr-1"></i>
+    Nenhuma pergunta encontrada. Tente outra palavra
+    {% if user.is_authenticated %}
+        ou <a href="{% url 'criar_feedback' %}">envie a sua dúvida como feedback</a>.
+    {% else %}
+        ou <a href="{% url 'login' %}">entre</a> para enviar a sua dúvida como feedback.
+    {% endif %}
+</div>

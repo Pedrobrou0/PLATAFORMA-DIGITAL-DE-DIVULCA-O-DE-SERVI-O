@@ -212,3 +212,20 @@ def deletar_avaliacao(request, id):
         'objeto': avaliacao,
         'lista_url': 'lista_avaliacoes'
     })
+
+
+# Abas da Central de Ajuda (RF021). A chave vai no endereço: /ajuda/?aba=profissional
+ABAS_AJUDA = ['cliente', 'profissional', 'perguntas']
+
+
+def ajuda(request):
+    # Central de Ajuda (RF021): pública, como as outras consultas.
+    aba = request.GET.get('aba')
+
+    if aba not in ABAS_AJUDA:
+        # Sem aba no endereço, abre a aba do perfil de quem está usando.
+        aba = 'profissional' if eh_profissional(request.user) else 'cliente'
+
+    return render(request, 'suporte/ajuda.html', {
+        'aba': aba
+    })

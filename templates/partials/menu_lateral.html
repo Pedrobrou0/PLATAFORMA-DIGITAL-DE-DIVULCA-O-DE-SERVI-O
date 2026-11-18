@@ -98,6 +98,14 @@
                     </a>
                 </li>
 
+                <!-- Central de Ajuda (RF021), aberta para todos -->
+                <li class="nav-item">
+                    <a href="{% url 'ajuda' %}" class="nav-link {% if rota == 'ajuda' %}active{% endif %}">
+                        <i class="nav-icon fas fa-question-circle"></i>
+                        <p>Ajuda</p>
+                    </a>
+                </li>
+
                 {% if user.is_authenticated %}
 
                     <!-- Área de quem está logado -->

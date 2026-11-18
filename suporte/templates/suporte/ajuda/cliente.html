@@ -1,0 +1,110 @@
+{% comment %}
+    Aba "Visitante e cliente" da Central de Ajuda.
+    Passo a passo no componente timeline do AdminLTE.
+{% endcomment %}
+
+<p class="lead mb-4">
+    Para olhar os serviços e os profissionais não precisa de conta.
+    Para pedir um serviço, avaliar e enviar feedback, é só criar a sua conta de cliente.
+</p>
+
+<div class="timeline">
+
+    <div class="time-label">
+        <span class="bg-info">Sem conta (visitante)</span>
+    </div>
+
+    <div>
+        <i class="fas fa-search bg-info"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>1. Encontre um serviço e o profissional</strong></h3>
+            <div class="timeline-body">
+                Abra <strong>Serviços</strong> no menu e digite o que precisa no campo
+                <strong>Buscar</strong> (a busca procura no título do serviço) ou escolha uma
+                <strong>Categoria</strong> e clique em <strong>Filtrar</strong>. Na página inicial,
+                as categorias com mais serviços também aparecem como atalhos. Em
+                <strong>Detalhar</strong> → <strong>Ver perfil e contato</strong> você vê as avaliações,
+                a nota média e o botão <strong>Chamar no WhatsApp</strong>.
+            </div>
+            <div class="timeline-footer">
+                <a href="{% url 'lista_servicos' %}" class="btn btn-info btn-sm">Ver serviços</a>
+                <a href="{% url 'lista_categorias' %}" class="btn btn-default btn-sm">Ver categorias</a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-user-plus bg-info"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>2. Crie a sua conta</strong></h3>
+            <div class="timeline-body">
+                Clique em <strong>Cadastre-se</strong>, escolha <strong>Sou cliente</strong> e
+                preencha nome de usuário, nome, e-mail e senha. Use um e-mail que você acessa:
+                ele serve para redefinir a senha. Depois do cadastro você já entra no sistema.
+            </div>
+            {% if not user.is_authenticated %}
+                <div class="timeline-footer">
+                    <a href="{% url 'cadastro_cliente' %}" class="btn btn-primary btn-sm">Criar conta de cliente</a>
+                    <a href="{% url 'login' %}" class="btn btn-default btn-sm">Já tenho conta</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="time-label">
+        <span class="bg-primary">Com conta (cliente)</span>
+    </div>
+
+    <div>
+        <i class="fas fa-paper-plane bg-primary"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>3. Solicite o serviço</strong></h3>
+            <div class="timeline-body">
+                Na página do serviço, clique em <strong>Solicitar serviço</strong>, descreva o que
+                você precisa (local, dia, detalhes do problema) e envie. O valor considerado é o
+                preço informado pelo profissional. A solicitação começa como
+                <span class="badge badge-warning">Pendente</span>.
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-clipboard-list bg-primary"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>4. Acompanhe o pedido</strong></h3>
+            <div class="timeline-body">
+                Em <strong>Minhas solicitações</strong> você vê o status de cada pedido:
+                <span class="badge badge-warning">Pendente</span> (esperando o profissional),
+                <span class="badge badge-info">Aceita</span>,
+                <span class="badge badge-danger">Recusada</span>,
+                <span class="badge badge-secondary">Cancelada</span> ou
+                <span class="badge badge-success">Concluída</span>.
+                Clique em <strong>Detalhar</strong> para ver tudo. Enquanto o pedido estiver
+                Pendente ou Aceito, você pode usar <strong>Cancelar solicitação</strong>.
+            </div>
+            {% if user.is_authenticated %}
+                <div class="timeline-footer">
+                    <a href="{% url 'lista_solicitacoes' %}" class="btn btn-primary btn-sm">Minhas solicitações</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-star bg-warning"></i>
+        <div class="timeline-item">
+            <h3 class="timeline-header"><strong>5. Avalie o profissional</strong></h3>
+            <div class="timeline-body">
+                Quando o profissional marcar o serviço como concluído, abra a solicitação e clique
+                em <strong>Avaliar profissional</strong>. Dê uma nota de 1 a 5 estrelas e escreva um
+                comentário. A sua avaliação aparece no perfil dele e entra na nota média, ajudando
+                outras pessoas a escolher.
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <i class="fas fa-check bg-gray"></i>
+    </div>
+
+</div>

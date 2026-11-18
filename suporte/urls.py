@@ -64,4 +64,10 @@ path(
         name='deletar_avaliacao'
     ),
 
+    path(
+        'ajuda/',
+        views.ajuda,
+        name='ajuda'
+    ),
+
 ]
