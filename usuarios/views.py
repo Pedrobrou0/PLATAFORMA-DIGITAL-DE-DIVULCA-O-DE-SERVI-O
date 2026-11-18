@@ -11,7 +11,7 @@ from django.contrib.auth.forms import (
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Avg, Count, ProtectedError, Q
 from django.utils.http import (
     url_has_allowed_host_and_scheme,
@@ -113,7 +113,7 @@ def lista_profissionais(request):
 
 
 def detalhe_profissional(request, id):
-    profissional = Profissional.objects.get(id=id)
+    profissional = get_object_or_404(Profissional, id=id)
 
     # Só as avaliações que os clientes fizeram sobre o profissional.
     avaliacoes = profissional.avaliacoes_profissional.filter(
@@ -157,7 +157,7 @@ def criar_profissional(request):
 
 @login_required
 def editar_profissional(request, id):
-    profissional = Profissional.objects.get(id=id)
+    profissional = get_object_or_404(Profissional, id=id)
 
     if not pode_gerenciar(request.user, profissional.id):
         raise PermissionDenied
@@ -182,7 +182,7 @@ def editar_profissional(request, id):
 
 @login_required
 def deletar_profissional(request, id):
-    profissional = Profissional.objects.get(id=id)
+    profissional = get_object_or_404(Profissional, id=id)
 
     if not pode_gerenciar(request.user, profissional.id):
         raise PermissionDenied

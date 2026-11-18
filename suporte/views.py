@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Feedback, Avaliacao, TipoAutorAvaliacao
 from .forms import (
     FeedbackForm,
@@ -34,7 +34,7 @@ def lista_feedbacks(request):
 
 @login_required
 def detalhe_feedback(request, id):
-    feedback = Feedback.objects.get(id=id)
+    feedback = get_object_or_404(Feedback, id=id)
 
     if (
         feedback.usuario_id != request.user.id
@@ -68,7 +68,7 @@ def criar_feedback(request):
 @login_required
 @permission_required('suporte.change_feedback', raise_exception=True)
 def editar_feedback(request, id):
-    feedback = Feedback.objects.get(id=id)
+    feedback = get_object_or_404(Feedback, id=id)
 
     form = FeedbackEditarForm(
         request.POST or None,
@@ -90,7 +90,7 @@ def editar_feedback(request, id):
 @login_required
 @permission_required('suporte.delete_feedback', raise_exception=True)
 def deletar_feedback(request, id):
-    feedback = Feedback.objects.get(id=id)
+    feedback = get_object_or_404(Feedback, id=id)
 
     if request.method == 'POST':
         feedback.delete()
@@ -117,7 +117,7 @@ def lista_avaliacoes(request):
 @login_required
 @permission_required('suporte.view_avaliacao', raise_exception=True)
 def detalhe_avaliacao(request, id):
-    avaliacao = Avaliacao.objects.get(id=id)
+    avaliacao = get_object_or_404(Avaliacao, id=id)
 
     return render(request, 'suporte/avaliacao_detalhe.html', {
         'avaliacao': avaliacao,
@@ -165,7 +165,7 @@ def criar_avaliacao(request):
 @login_required
 @permission_required('suporte.change_avaliacao', raise_exception=True)
 def editar_avaliacao(request, id):
-    avaliacao = Avaliacao.objects.get(id=id)
+    avaliacao = get_object_or_404(Avaliacao, id=id)
 
     if not eh_autor(request.user, avaliacao):
         raise PermissionDenied
@@ -196,7 +196,7 @@ def editar_avaliacao(request, id):
 @login_required
 @permission_required('suporte.delete_avaliacao', raise_exception=True)
 def deletar_avaliacao(request, id):
-    avaliacao = Avaliacao.objects.get(id=id)
+    avaliacao = get_object_or_404(Avaliacao, id=id)
 
     if not (eh_autor(request.user, avaliacao) or request.user.is_superuser):
         raise PermissionDenied

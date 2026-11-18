@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Erro no servidor | Plataforma de Serviços</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/adminlte.min.css' %}">
+</head>
+
+{% comment %}
+    Erro 500 (DEBUG False). O Django monta esta página sem o contexto da
+    requisição, por isso ela não herda o base.html. Atende ao RNF014.
+{% endcomment %}
+
+<body class="hold-transition login-page">
+
+<div class="login-box" style="width: 520px; max-width: 95%;">
+
+    <div class="card card-outline card-danger">
+
+        <div class="card-header text-center">
+            <a href="{% url 'landing' %}" class="h1"><b>Serviços</b> GBI</a>
+
+            <p class="text-muted mb-0">
+                Plataforma de Serviços Autônomos · Guanambi-BA
+            </p>
+        </div>
+
+        <div class="card-body text-center">
+
+            <h2 class="text-danger mb-3">
+                <i class="fas fa-exclamation-circle"></i> 500
+            </h2>
+
+            <h5>Algo deu errado do nosso lado.</h5>
+
+            <p class="text-muted">
+                O erro fica registrado no servidor para a equipe corrigir. Tente
+                de novo em alguns instantes. Se você estava salvando um formulário, confira
+                depois se as informações foram gravadas.
+            </p>
+
+            <a href="javascript:history.back()" class="btn btn-default mb-1">
+                <i class="fas fa-arrow-left mr-1"></i> Voltar
+            </a>
+
+            <a href="{% url 'landing' %}" class="btn btn-primary mb-1">
+                <i class="fas fa-home mr-1"></i> Página inicial
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

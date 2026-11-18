@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import ProtectedError
 from .models import Categoria, Servico
 from .forms import CategoriaForm, ServicoForm
@@ -19,7 +19,7 @@ def lista_categorias(request):
 @login_required
 @permission_required('servicos.delete_categoria', raise_exception=True)
 def deletar_categoria(request, id):
-    categoria = Categoria.objects.get(id=id)
+    categoria = get_object_or_404(Categoria, id=id)
 
     if request.method == 'POST':
         try:
@@ -60,7 +60,7 @@ def criar_categoria(request):
 @login_required
 @permission_required('servicos.change_categoria', raise_exception=True)
 def editar_categoria(request, id):
-    categoria = Categoria.objects.get(id=id)
+    categoria = get_object_or_404(Categoria, id=id)
 
     form = CategoriaForm(
         request.POST or None,
@@ -80,7 +80,7 @@ def editar_categoria(request, id):
 
 
 def detalhe_categoria(request, id):
-    categoria = Categoria.objects.get(id=id)
+    categoria = get_object_or_404(Categoria, id=id)
 
     profissionais = categoria.profissionais.all()
 
@@ -118,7 +118,7 @@ def lista_servicos(request):
 
 
 def detalhe_servico(request, id):
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id)
 
     return render(request, 'servicos/servico_detalhe.html', {
         'servico': servico,
@@ -158,7 +158,7 @@ def criar_servico(request):
 @login_required
 @permission_required('servicos.change_servico', raise_exception=True)
 def editar_servico(request, id):
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id)
 
     if not pode_gerenciar(request.user, servico.profissional_id):
         raise PermissionDenied
@@ -184,7 +184,7 @@ def editar_servico(request, id):
 @login_required
 @permission_required('servicos.delete_servico', raise_exception=True)
 def deletar_servico(request, id):
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id)
 
     if not pode_gerenciar(request.user, servico.profissional_id):
         raise PermissionDenied
@@ -210,7 +210,7 @@ def deletar_servico(request, id):
 @login_required
 @permission_required('servicos.change_servico', raise_exception=True)
 def ativar_servico(request, id):
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id)
 
     if not pode_gerenciar(request.user, servico.profissional_id):
         raise PermissionDenied
@@ -226,7 +226,7 @@ def ativar_servico(request, id):
 @login_required
 @permission_required('servicos.change_servico', raise_exception=True)
 def desativar_servico(request, id):
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id)
 
     if not pode_gerenciar(request.user, servico.profissional_id):
         raise PermissionDenied

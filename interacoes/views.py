@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Solicitacao, StatusSolicitacao
 from .forms import SolicitacaoForm, SolicitacaoEditarForm
 from usuarios.permissoes import eh_administrador, eh_profissional
@@ -47,7 +47,7 @@ def lista_solicitacoes(request):
 @login_required
 @permission_required('interacoes.view_solicitacao', raise_exception=True)
 def detalhe_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     eh_cliente_dono = solicitacao.cliente_id == request.user.id
     eh_profissional_dono = (
@@ -99,7 +99,7 @@ def criar_solicitacao(request):
 @login_required
 @permission_required('interacoes.add_solicitacao', raise_exception=True)
 def editar_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     verificar_cliente_dono(request, solicitacao)
 
@@ -129,7 +129,7 @@ def editar_solicitacao(request, id):
 @login_required
 @permission_required('interacoes.delete_solicitacao', raise_exception=True)
 def deletar_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     if request.method == 'POST':
         solicitacao.delete()
@@ -146,7 +146,7 @@ def deletar_solicitacao(request, id):
 @login_required
 @permission_required('interacoes.change_solicitacao', raise_exception=True)
 def aceitar_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     verificar_profissional_dono(request, solicitacao)
 
@@ -161,7 +161,7 @@ def aceitar_solicitacao(request, id):
 @login_required
 @permission_required('interacoes.change_solicitacao', raise_exception=True)
 def recusar_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     verificar_profissional_dono(request, solicitacao)
 
@@ -176,7 +176,7 @@ def recusar_solicitacao(request, id):
 @login_required
 @permission_required('interacoes.add_solicitacao', raise_exception=True)
 def cancelar_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     verificar_cliente_dono(request, solicitacao)
 
@@ -194,7 +194,7 @@ def cancelar_solicitacao(request, id):
 @login_required
 @permission_required('interacoes.change_solicitacao', raise_exception=True)
 def concluir_solicitacao(request, id):
-    solicitacao = Solicitacao.objects.get(id=id)
+    solicitacao = get_object_or_404(Solicitacao, id=id)
 
     verificar_profissional_dono(request, solicitacao)
 

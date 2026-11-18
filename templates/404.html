@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% comment %}
+    Erro 404 (DEBUG False): endereço errado ou item que não existe mais
+    (get_object_or_404 nas views). Atende ao RNF014.
+{% endcomment %}
+
+{% block title %}Página não encontrada{% endblock %}
+
+{% block page_title %}Página não encontrada{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Erro 404</li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="error-page mt-4">
+
+        <h2 class="headline text-warning">404</h2>
+
+        <div class="error-content">
+
+            <h3>
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                Não encontramos o que você procurou.
+            </h3>
+
+            <p>
+                O endereço pode estar errado, ou o serviço, o profissional ou
+                a solicitação foi excluído ou desativado.
+            </p>
+
+            <!-- Atalho para buscar outro serviço -->
+            <form method="get" action="{% url 'lista_servicos' %}" class="search-form mb-3">
+                <div class="input-group">
+                    <input type="search" name="q" class="form-control" placeholder="Buscar um serviço">
+
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <a href="{% url 'landing' %}" class="btn btn-default mb-1">
+                <i class="fas fa-home mr-1"></i> Página inicial
+            </a>
+
+            <a href="{% url 'lista_servicos' %}" class="btn btn-default mb-1">
+                <i class="fas fa-briefcase mr-1"></i> Ver serviços
+            </a>
+
+        </div>
+
+    </div>
+
+{% endblock %}
